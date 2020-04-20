@@ -10,7 +10,7 @@ NestJS Swagger decorator for specifying API exceptions. This is a wrapper for `@
 # Installation
 
 ```bash
-npm i nestjs-swagger-api-exception-decorator
+npm i @nanogiants/nestjs-swagger-api-exception-decorator
 ```
 
 # Usage
@@ -18,7 +18,7 @@ npm i nestjs-swagger-api-exception-decorator
 TypeScript:
 
 ```typescript
-import { ApiException } from 'nestjs-swagger-api-exception-decorator';
+import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 ```
 
 You may use NestJS built in exceptions:
