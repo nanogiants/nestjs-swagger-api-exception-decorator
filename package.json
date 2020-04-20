@@ -16,6 +16,10 @@
   ],
   "license": "MIT",
   "author": "NanoGiants GmbH",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nanogiants/nestjs-swagger-api-exception-decorator.git"
+  },
   "peerDependencies": {
     "@nestjs/common": "^7.0.7",
     "@nestjs/swagger": "^4.5.1"

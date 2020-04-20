@@ -2,9 +2,8 @@ name: Node.js CI
 
 on:
   push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+    branches:
+      - refs/tags/*
 
 jobs:
   build:
