@@ -1,0 +1,47 @@
+{
+  "name": "nestjs-swagger-api-exception-decorator",
+  "version": "1.0.0",
+  "description": "NestJS Swagger decorator for API exceptions",
+  "main": "./dist/index",
+  "types": "./dist/index",
+  "scripts": {
+    "prepublishOnly": "rimraf dist && tsc",
+    "lint": "tslint -p tsconfig.json -c tslint.json"
+  },
+  "keywords": [
+    "nestjs",
+    "swagger",
+    "api",
+    "exception"
+  ],
+  "license": "MIT",
+  "author": "NanoGiants GmbH",
+  "peerDependencies": {
+    "@nestjs/common": "^7.0.7",
+    "@nestjs/swagger": "^4.5.1"
+  },
+  "devDependencies": {
+    "@nestjs/common": "^7.0.7",
+    "@nestjs/swagger": "^4.5.1",
+    "husky": "^4.2.5",
+    "prettier": "^2.0.3",
+    "pretty-quick": "^2.0.1",
+    "typescript": "^3.8.3",
+    "tslint": "^6.1.1",
+    "rimraf": "^3.0.2",
+    "rxjs": "^6.5.5"
+  },
+  "prettier": {
+    "useTabs": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "printWidth": 120,
+    "trailingComma": "all",
+    "arrowParens": "avoid"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged && npm run lint"
+    }
+  }
+}
