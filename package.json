@@ -25,15 +25,15 @@
     "@nestjs/swagger": "^4.5.1"
   },
   "devDependencies": {
-    "@nestjs/common": "^7.0.7",
-    "@nestjs/swagger": "^4.5.1",
+    "@nestjs/common": "^7.3.2",
+    "@nestjs/swagger": "^4.5.12",
     "husky": "^4.2.5",
-    "prettier": "^2.0.3",
+    "prettier": "^2.0.5",
     "pretty-quick": "^2.0.1",
-    "typescript": "^3.8.3",
-    "tslint": "^6.1.1",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.5.5"
+    "rxjs": "^6.6.0",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.7"
   },
   "prettier": {
     "useTabs": false,
