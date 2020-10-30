@@ -7,7 +7,17 @@
   "rules": {
     "quotemark": [true, "single"],
     "member-access": [false],
-    "ordered-imports": [false],
+    "variable-name": false,
+    "ordered-imports": [
+      true,
+      {
+        "module-source-path": "full",
+        "named-imports-order": "lowercase-last",
+        "import-sources-order": "lowercase-last",
+        "grouped-imports": true,
+        "groups": ["^[a-zA-Z]", "^@nestjs", "^@utils", "^@common", "^@servicetool", "^@app", "^[.].*"]
+      }
+    ],
     "max-line-length": [true, 150],
     "member-ordering": [false],
     "interface-name": [false],

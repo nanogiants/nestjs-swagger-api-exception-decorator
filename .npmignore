@@ -23,3 +23,6 @@ tslint.json
 .github
 
 *.tar.gz
+*.tgz
+jest.config.js
+tsconfig.build.json
