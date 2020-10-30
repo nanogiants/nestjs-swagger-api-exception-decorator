@@ -1,18 +1,37 @@
-import { Exception, ExceptionsArguments } from 'interfaces/Exceptions';
-
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { ExampleObject, ReferenceObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-export function buildTemplatedApiExceptionDecorator(template: any) {
-  function decoratorBuilder<T extends HttpException>(exceptions: ExceptionsArguments<T>) {
-    return ApiException(exceptions, template);
+import { Exception, ExceptionsArguments } from '../interfaces/Exceptions';
+import { Options } from '../interfaces/Options';
+
+/**
+ * Build your own custom decorator. This enables you to re-use the same template again without the need to specify it
+ * over and over again
+ *
+ * @param template Any object describing the template which should be shown as example value
+ * @param globalOptions Set a template or specify the content type
+ */
+export function buildTemplatedApiExceptionDecorator(template: any, globalOptions?: Omit<Options, 'template'>) {
+  function decoratorBuilder<T extends HttpException>(exceptions: ExceptionsArguments<T>, options?: Options) {
+    return ApiException(exceptions, {
+      ...globalOptions,
+      template,
+      ...options,
+    });
   }
 
   return decoratorBuilder;
 }
 
-export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsArguments<T>, template?: any) {
+/**
+ * This shows exceptions with status code, description and grouped with example values. If there are multiple exceptions
+ * per status codes, all matching exceptions will be grouped and shown as examples.
+ *
+ * @param exceptionsArg Pass one or more exceptions which should be shown in Swagger API documentation
+ * @param options Set a template or specify the content type
+ */
+export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsArguments<T>, options?: Options) {
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
     let exceptions: Exception<T>[];
 
@@ -30,7 +49,9 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
       );
     }
 
-    const { content, status } = buildContent(instances, template);
+    const mergedOptions = mergeOptions(options);
+
+    const { content, status } = buildContent(instances, mergedOptions);
 
     // Just pass decorator args to ApiResponse... no need to use Reflect here :)
     ApiResponse({
@@ -72,16 +93,16 @@ function checkIfAllExceptionStatusAreEqual(exceptions: HttpException[]) {
   return new Set(exceptions.map(exception => exception.getStatus())).size === 1;
 }
 
-function buildContent(exceptions: HttpException[], template?: any) {
+function buildContent(exceptions: HttpException[], options: Options) {
   const status = exceptions[0].getStatus();
 
   const examples: Record<string, ExampleObject | ReferenceObject> = {};
-  const content = { 'application/json': { examples } };
+  const content = { [options.contentType]: { examples } };
 
   for (const instance of exceptions) {
     let copy: any;
-    if (template && typeof template === 'object') {
-      copy = { ...template };
+    if (options.template && typeof options.template === 'object') {
+      copy = { ...options.template };
       for (const key of Object.keys(copy)) {
         if (copy[key] === '$status') {
           copy[key] = instance.getStatus();
@@ -91,11 +112,30 @@ function buildContent(exceptions: HttpException[], template?: any) {
       }
     }
 
-    examples[instance.constructor.name] = {
-      description: instance.message,
-      value: copy,
-    };
+    const exampleName = instance.constructor.name;
+
+    if (examples[exampleName]) {
+      const existingDescription = examples[exampleName] as ExampleObject;
+      examples[exampleName] = {
+        description: `${existingDescription.description} | ${instance.message}`,
+      };
+    } else {
+      examples[exampleName] = {
+        description: instance.message,
+        value: copy,
+      };
+    }
   }
 
   return { content, status };
+}
+
+function mergeOptions(options: Options) {
+  return Object.assign(
+    {
+      contentType: 'application/json',
+      template: undefined,
+    } as Options,
+    options,
+  );
 }

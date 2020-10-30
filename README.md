@@ -7,7 +7,7 @@ https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator
 
 NestJS Swagger decorator for specifying API exceptions. This is a wrapper for `@ApiResponse(...)` which uses `message` and `status` inside NestJS `HttpException` as description and HTTP status code in the Swagger documentation. You can pass any subclass of `HttpException` to the decorator. This decorator is especially useful if you want to define multiple custom exceptions per status code.
 
-When using custom exceptions it's names will be used as example name in API documentation.
+When using custom exceptions it's names will be used as example name in API documentation. If multiple exceptions with the same name exist, the description will be extended by the additional exceptions description.
 
 # Examples
 
@@ -132,6 +132,13 @@ You may use the available placeholders:
 
 - `$status`: replaces the placeholder by the status code specified in the exception
 - `$description`: replaces the placeholder by the message/description specified in the exception
+
+## `(template: any, options?: Options)` Description
+
+* `template`: pass any template object (may include any placeholder as previously described)
+* `options`
+  * `template`: Specify template here. Specifying template here again, overwrites globally set template. DEFAULT: `undefined`
+  * `contentType`: Specify content type. DEFAULT: `application/json`
 
 # License
 
