@@ -117,11 +117,11 @@ function buildContent(exceptions: HttpException[], options: Options) {
     if (examples[exampleName]) {
       const existingDescription = examples[exampleName] as ExampleObject;
       examples[exampleName] = {
-        description: `${existingDescription.description} | ${instance.message}`,
+        description: `${existingDescription.description} | ${options.description || instance.message}`,
       };
     } else {
       examples[exampleName] = {
-        description: instance.message,
+        description: options.description || instance.message,
         value: copy,
       };
     }
@@ -135,6 +135,7 @@ function mergeOptions(options: Options) {
     {
       contentType: 'application/json',
       template: undefined,
+      description: undefined,
     } as Options,
     options,
   );
