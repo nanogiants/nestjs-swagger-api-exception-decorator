@@ -1,7 +1,7 @@
 // tslint:disable: max-classes-per-file
 
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 
 import { buildTemplatedApiExceptionDecorator } from './ApiException';
 
@@ -10,11 +10,15 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   description: '$description',
 });
 
+const { ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
+
 jest.mock('@nestjs/swagger', () => {
   return {
-    ApiResponse: jest.fn((...args: any[]) => {
+    ApiResponse: jest.fn((options: ApiResponseOptions) => {
       // tslint:disable-next-line: no-empty
-      return (...args1: any[]) => {};
+      // return (__: any[]) => {};
+
+      return ActualApiResponse(options);
     }),
   };
 });
@@ -65,29 +69,31 @@ describe('Decorator', () => {
           }
         }
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 400,
-          content: {
-            'application/json': {
-              examples: {
-                CustomBadRequestException: {
-                  description: 'Bad Request',
-                  value: {
-                    statusCode: 400,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 400,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomBadRequestException: {
                     description: 'Bad Request',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request',
+                    },
                   },
-                },
-                CustomBadRequestException2: {
-                  description: 'Bad Request 2',
-                  value: {
-                    statusCode: 400,
+                  CustomBadRequestException2: {
                     description: 'Bad Request 2',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request 2',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
 
@@ -113,29 +119,31 @@ describe('Decorator', () => {
 
         expect(spy).toBeCalled();
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 400,
-          content: {
-            'application/json': {
-              examples: {
-                CustomBadRequestException: {
-                  description: 'Bad Request',
-                  value: {
-                    statusCode: 400,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 400,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomBadRequestException: {
                     description: 'Bad Request',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request',
+                    },
                   },
-                },
-                NotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+                  NotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
   });
@@ -150,22 +158,24 @@ describe('Decorator', () => {
           }
         }
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 404,
-          content: {
-            'application/json': {
-              examples: {
-                NotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  NotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
   });
@@ -179,22 +189,24 @@ describe('Decorator', () => {
         }
       }
 
-      expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-        status: 404,
-        content: {
-          'application/json': {
-            examples: {
-              CustomNotFoundExceptionWithArrayMessage: {
-                description: 'hallo',
-                value: {
-                  statusCode: 404,
+      expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+        expect.objectContaining({
+          status: 404,
+          content: {
+            'application/json': {
+              examples: {
+                CustomNotFoundExceptionWithArrayMessage: {
                   description: 'hallo',
+                  value: {
+                    statusCode: 404,
+                    description: 'hallo',
+                  },
                 },
               },
             },
           },
-        },
-      });
+        }),
+      );
     });
   });
 
@@ -210,6 +222,45 @@ describe('Decorator', () => {
       } catch (error) {
         expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
       }
+    });
+  });
+
+  describe('given multiple @ApiException decorators with same status codes', () => {
+    it('should be grouped correctly', () => {
+      @TemplatedApiException(CustomBadRequestException)
+      class Ignore {
+        @TemplatedApiException(CustomNotFoundException)
+        @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+        test() {
+          return;
+        }
+      }
+
+      expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+        expect.objectContaining({
+          status: 404,
+          content: {
+            'application/json': {
+              examples: {
+                CustomNotFoundExceptionWithArrayMessage: {
+                  description: 'hallo',
+                  value: {
+                    statusCode: 404,
+                    description: 'hallo',
+                  },
+                },
+                CustomNotFoundException: {
+                  description: 'Not Found',
+                  value: {
+                    statusCode: 404,
+                    description: 'Not Found',
+                  },
+                },
+              },
+            },
+          },
+        }),
+      );
     });
   });
 });

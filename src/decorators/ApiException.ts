@@ -1,6 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
-import { ExampleObject, ReferenceObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { ContentObject, ExampleObject, ReferenceObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 import { Exception, ExceptionsArguments } from '../interfaces/Exceptions';
 import { Options } from '../interfaces/Options';
@@ -52,6 +53,33 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
     const mergedOptions = mergeOptions(options);
 
     const { content, status } = buildContent(instances, mergedOptions);
+
+    if (descriptor) {
+      const existingExamples = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value) as Record<
+        string,
+        ContentObject
+      >;
+
+      if (existingExamples) {
+        // tslint:disable-next-line: no-console
+        console.warn(
+          'WARNING: ApiResponse/ApiException has been used already. We need to attach the newly generated example to the existing payload!',
+        );
+
+        // console.log({ existing: JSON.stringify(existingExamples) });
+
+        const {
+          [status]: { content: existingContent },
+        } = existingExamples;
+
+        if (existingContent) {
+          // TODO: Append content to existing content
+        }
+      }
+    } else {
+      const previous = Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
+      // console.log({ previousTarget: previous });
+    }
 
     // Just pass decorator args to ApiResponse... no need to use Reflect here :)
     ApiResponse({
