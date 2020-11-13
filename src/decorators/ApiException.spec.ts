@@ -49,7 +49,7 @@ describe('Decorator', () => {
     ApiResponseMock.mockClear();
   });
 
-  describe('@ApiException', () => {
+  describe('@ApiException - multiple exceptions', () => {
     describe('given valid subclassed HttpExceptions', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -138,7 +138,7 @@ describe('Decorator', () => {
     });
   });
 
-  describe('@ApiException', () => {
+  describe('@ApiException - single exception', () => {
     describe('given valid subclassed HttpException', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -168,119 +168,121 @@ describe('Decorator', () => {
         );
       });
     });
-  });
 
-  describe('given a directly instantiated exception', () => {
-    it('should should use the already instantiated exception', () => {
-      class Ignore {
-        @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
-        test() {
-          return;
-        }
-      }
-
-      expect(ApiResponseMock.mock.calls[0][0]).toEqual(
-        expect.objectContaining({
-          status: 404,
-          content: {
-            'application/json': {
-              examples: {
-                CustomNotFoundExceptionWithArrayMessage: {
-                  description: 'hallo',
-                  value: {
-                    statusCode: 404,
-                    description: 'hallo',
-                  },
-                },
-              },
-            },
-          },
-        }),
-      );
-    });
-  });
-
-  describe('given a non instantiated exception', () => {
-    it('should should use the already instantiated exception', () => {
-      try {
+    describe('given a directly instantiated exception', () => {
+      it('should should use the already instantiated exception', () => {
         class Ignore {
-          @TemplatedApiException(CustomNotFoundExceptionWithArrayMessage)
+          @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
           test() {
             return;
           }
         }
-      } catch (error) {
-        expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
-      }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomNotFoundExceptionWithArrayMessage: {
+                    description: 'hallo',
+                    value: {
+                      statusCode: 404,
+                      description: 'hallo',
+                    },
+                  },
+                },
+              },
+            },
+          }),
+        );
+      });
+    });
+
+    describe('given a non instantiated exception', () => {
+      it('should should use the already instantiated exception', () => {
+        try {
+          class Ignore {
+            @TemplatedApiException(CustomNotFoundExceptionWithArrayMessage)
+            test() {
+              return;
+            }
+          }
+        } catch (error) {
+          expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
+        }
+      });
     });
   });
 
-  describe('given multiple @ApiException decorators with same status codes', () => {
-    it('should be grouped correctly', () => {
-      @TemplatedApiException(CustomBadRequestException)
-      @TemplatedApiException(NotFoundException)
-      @TemplatedApiException(CustomNotFoundException)
-      class GroupTest {
+  describe('usage of multiple @ApiException', () => {
+    describe('given multiple @ApiException decorators with same status codes', () => {
+      it('should be grouped correctly', () => {
+        @TemplatedApiException(CustomBadRequestException)
+        @TemplatedApiException(NotFoundException)
         @TemplatedApiException(CustomNotFoundException)
-        @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
-        test() {
-          return;
+        class GroupTest {
+          @TemplatedApiException(CustomNotFoundException)
+          @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+          test() {
+            return;
+          }
         }
-      }
 
-      const args = ApiResponseMock.mock.calls;
+        const args = ApiResponseMock.mock.calls;
 
-      expect(args[0][0]).toEqual(
-        expect.objectContaining({
-          status: 404,
-          content: {
-            'application/json': {
-              examples: {
-                CustomNotFoundExceptionWithArrayMessage: {
-                  description: 'hallo',
-                  value: {
-                    statusCode: 404,
+        expect(args[0][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomNotFoundExceptionWithArrayMessage: {
                     description: 'hallo',
+                    value: {
+                      statusCode: 404,
+                      description: 'hallo',
+                    },
                   },
-                },
-                CustomNotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+                  CustomNotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        }),
-      );
+          }),
+        );
 
-      expect(args[1][0]).toEqual(
-        expect.objectContaining({
-          status: 404,
-          content: {
-            'application/json': {
-              examples: {
-                CustomNotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+        expect(args[1][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomNotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
-                },
-                NotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+                  NotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        }),
-      );
+          }),
+        );
+      });
     });
   });
 });

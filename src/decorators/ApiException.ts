@@ -36,21 +36,9 @@ export function buildTemplatedApiExceptionDecorator(template: any, globalOptions
  */
 export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsArguments<T>, options?: Options) {
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
-    let exceptions: Exception<T>[];
-
-    if (Array.isArray(exceptionsArg)) {
-      exceptions = exceptionsArg;
-    } else {
-      exceptions = [exceptionsArg];
-    }
-
+    const exceptions: Exception<T>[] = Array.isArray(exceptionsArg) ? exceptionsArg : [exceptionsArg];
     const instances = instantiateExceptions(exceptions);
-    if (!checkIfAllExceptionStatusAreEqual(instances)) {
-      // tslint:disable-next-line: no-console
-      console.warn(
-        `@ApiException(): Please inspect exceptions in decorator. Not all statusses are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
-      );
-    }
+    printWarningIfStatusCodesDoNotMatch(instances, target, propertyKey);
 
     const mergedOptions = mergeOptions(options);
     const { content, status } = buildContent(instances, mergedOptions);
@@ -114,8 +102,13 @@ function instantiateExceptions(exceptionsArgs: Exception<HttpException>[]) {
   });
 }
 
-function checkIfAllExceptionStatusAreEqual(exceptions: HttpException[]) {
-  return new Set(exceptions.map(exception => exception.getStatus())).size === 1;
+function printWarningIfStatusCodesDoNotMatch(exceptions: HttpException[], target: any, propertyKey: string) {
+  if (new Set(exceptions.map(exception => exception.getStatus())).size !== 1) {
+    // tslint:disable-next-line: no-console
+    console.warn(
+      `@ApiException(): Please inspect exceptions in decorator. Not all statusses are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
+    );
+  }
 }
 
 function buildContent(exceptions: HttpException[], options: Options) {
