@@ -18,25 +18,25 @@ jest.mock('@nestjs/swagger', () => {
   };
 });
 
-export class CustomBadRequestException extends BadRequestException {
+class CustomBadRequestException extends BadRequestException {
   constructor() {
     super('Bad Request');
   }
 }
 
-export class CustomBadRequestException2 extends BadRequestException {
+class CustomBadRequestException2 extends BadRequestException {
   constructor() {
     super('Bad Request 2');
   }
 }
 
-export class CustomNotFoundException extends NotFoundException {
+class CustomNotFoundException extends NotFoundException {
   constructor() {
     super('Not Found');
   }
 }
 
-export class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
+class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
   constructor(messages: string[]) {
     super(messages.join(', '));
   }
