@@ -1,3 +1,5 @@
+import merge from 'lodash.merge';
+
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
@@ -11,7 +13,7 @@ import { Options } from '../interfaces/Options';
  * over and over again
  *
  * @param template Any object describing the template which should be shown as example value
- * @param globalOptions Set a template or specify the content type
+ * @param globalOptions Specify the content type
  */
 export function buildTemplatedApiExceptionDecorator(template: any, globalOptions?: Omit<Options, 'template'>) {
   function decoratorBuilder<T extends HttpException>(exceptions: ExceptionsArguments<T>, options?: Options) {
@@ -51,41 +53,22 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
     }
 
     const mergedOptions = mergeOptions(options);
-
     const { content, status } = buildContent(instances, mergedOptions);
 
-    if (descriptor) {
-      const existingExamples = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value) as Record<
-        string,
-        ContentObject
-      >;
+    const existing = getExistingExamples({ target, descriptor });
+    if (existing?.[status]) {
+      const {
+        [status]: { content: existingContent },
+      } = existing;
 
-      if (existingExamples) {
-        // tslint:disable-next-line: no-console
-        console.warn(
-          'WARNING: ApiResponse/ApiException has been used already. We need to attach the newly generated example to the existing payload!',
-        );
-
-        // console.log({ existing: JSON.stringify(existingExamples) });
-
-        const {
-          [status]: { content: existingContent },
-        } = existingExamples;
-
-        if (existingContent) {
-          // TODO: Append content to existing content
-        }
-      }
+      merge(existingContent, content);
     } else {
-      const previous = Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
-      // console.log({ previousTarget: previous });
+      // Just pass decorator args to ApiResponse... no need to use Reflect here :)
+      ApiResponse({
+        status,
+        content,
+      })(target, propertyKey, descriptor);
     }
-
-    // Just pass decorator args to ApiResponse... no need to use Reflect here :)
-    ApiResponse({
-      status,
-      content,
-    })(target, propertyKey, descriptor);
 
     if (descriptor) {
       return descriptor;
@@ -93,6 +76,20 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
 
     return target;
   };
+}
+
+function getExistingExamples({
+  target,
+  descriptor,
+}: {
+  target?: any;
+  descriptor?: PropertyDescriptor;
+}): Record<string, ContentObject> {
+  if (descriptor) {
+    return Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+  } else if (target) {
+    return Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
+  }
 }
 
 function instantiateExceptions(exceptionsArgs: Exception<HttpException>[]) {

@@ -14,12 +14,7 @@ const { ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger')
 
 jest.mock('@nestjs/swagger', () => {
   return {
-    ApiResponse: jest.fn((options: ApiResponseOptions) => {
-      // tslint:disable-next-line: no-empty
-      // return (__: any[]) => {};
-
-      return ActualApiResponse(options);
-    }),
+    ApiResponse: jest.fn((options: ApiResponseOptions) => ActualApiResponse(options)),
   };
 });
 
@@ -47,11 +42,6 @@ export class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
   }
 }
 
-export class AnyException {}
-
-@TemplatedApiException(CustomNotFoundException)
-export class Test {}
-
 describe('Decorator', () => {
   const ApiResponseMock = ApiResponse as jest.Mock<typeof ApiResponse>;
 
@@ -59,7 +49,7 @@ describe('Decorator', () => {
     ApiResponseMock.mockClear();
   });
 
-  describe('@ApiExceptions', () => {
+  describe('@ApiException', () => {
     describe('given valid subclassed HttpExceptions', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -228,7 +218,9 @@ describe('Decorator', () => {
   describe('given multiple @ApiException decorators with same status codes', () => {
     it('should be grouped correctly', () => {
       @TemplatedApiException(CustomBadRequestException)
-      class Ignore {
+      @TemplatedApiException(NotFoundException)
+      @TemplatedApiException(CustomNotFoundException)
+      class GroupTest {
         @TemplatedApiException(CustomNotFoundException)
         @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
         test() {
@@ -236,7 +228,9 @@ describe('Decorator', () => {
         }
       }
 
-      expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+      const args = ApiResponseMock.mock.calls;
+
+      expect(args[0][0]).toEqual(
         expect.objectContaining({
           status: 404,
           content: {
@@ -250,6 +244,32 @@ describe('Decorator', () => {
                   },
                 },
                 CustomNotFoundException: {
+                  description: 'Not Found',
+                  value: {
+                    statusCode: 404,
+                    description: 'Not Found',
+                  },
+                },
+              },
+            },
+          },
+        }),
+      );
+
+      expect(args[1][0]).toEqual(
+        expect.objectContaining({
+          status: 404,
+          content: {
+            'application/json': {
+              examples: {
+                CustomNotFoundException: {
+                  description: 'Not Found',
+                  value: {
+                    statusCode: 404,
+                    description: 'Not Found',
+                  },
+                },
+                NotFoundException: {
                   description: 'Not Found',
                   value: {
                     statusCode: 404,
