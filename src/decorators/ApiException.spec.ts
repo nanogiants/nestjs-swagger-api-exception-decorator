@@ -1,7 +1,8 @@
 // tslint:disable: max-classes-per-file
 
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
+import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { buildTemplatedApiExceptionDecorator } from './ApiException';
 
@@ -10,11 +11,12 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   description: '$description',
 });
 
-const { ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
+const { ApiOperation: ActualApiOperation, ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
 
 jest.mock('@nestjs/swagger', () => {
   return {
     ApiResponse: jest.fn((options: ApiResponseOptions) => ActualApiResponse(options)),
+    ApiOperation: (options: ApiOperationOptions) => ActualApiOperation(options),
   };
 });
 
@@ -216,72 +218,90 @@ describe('Decorator', () => {
   });
 
   describe('usage of multiple @ApiException', () => {
-    describe('given multiple @ApiException decorators with same status codes', () => {
-      it('should be grouped correctly', () => {
-        @TemplatedApiException(CustomBadRequestException)
-        @TemplatedApiException(NotFoundException)
-        @TemplatedApiException(CustomNotFoundException)
-        class GroupTest {
-          @TemplatedApiException(CustomNotFoundException)
-          @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
-          test() {
-            return;
+    describe('given multiple @ApiException decorators', () => {
+      describe('when method has @ApiOperation attached', () => {
+        it('should be grouped correctly', () => {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException([CustomNotFoundException, NotFoundException])
+          class GroupTest {
+            @ApiOperation({ description: 'test' })
+            @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+            test() {
+              return;
+            }
           }
-        }
 
-        const args = ApiResponseMock.mock.calls;
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
-        expect(args[0][0]).toEqual(
-          expect.objectContaining({
-            status: 404,
-            content: {
-              'application/json': {
-                examples: {
-                  CustomNotFoundExceptionWithArrayMessage: {
-                    description: 'hallo',
-                    value: {
-                      statusCode: 404,
-                      description: 'hallo',
-                    },
-                  },
-                  CustomNotFoundException: {
-                    description: 'Not Found',
-                    value: {
-                      statusCode: 404,
-                      description: 'Not Found',
+          expect(meta).toEqual(
+            expect.objectContaining({
+              '400': {
+                content: {
+                  'application/json': {
+                    examples: {
+                      CustomBadRequestException: {
+                        description: 'Bad Request',
+                        value: {
+                          statusCode: 400,
+                          description: 'Bad Request',
+                        },
+                      },
                     },
                   },
                 },
+                description: '',
               },
-            },
-          }),
-        );
-
-        expect(args[1][0]).toEqual(
-          expect.objectContaining({
-            status: 404,
-            content: {
-              'application/json': {
-                examples: {
-                  CustomNotFoundException: {
-                    description: 'Not Found',
-                    value: {
-                      statusCode: 404,
-                      description: 'Not Found',
-                    },
-                  },
-                  NotFoundException: {
-                    description: 'Not Found',
-                    value: {
-                      statusCode: 404,
-                      description: 'Not Found',
+              '404': {
+                content: {
+                  'application/json': {
+                    examples: {
+                      CustomNotFoundExceptionWithArrayMessage: {
+                        description: 'hallo',
+                        value: {
+                          statusCode: 404,
+                          description: 'hallo',
+                        },
+                      },
+                      CustomNotFoundException: {
+                        description: 'Not Found',
+                        value: {
+                          statusCode: 404,
+                          description: 'Not Found',
+                        },
+                      },
+                      NotFoundException: {
+                        description: 'Not Found',
+                        value: {
+                          statusCode: 404,
+                          description: 'Not Found',
+                        },
+                      },
                     },
                   },
                 },
+                description: '',
               },
-            },
-          }),
-        );
+            }),
+          );
+        });
+      });
+
+      describe('when method has @ApiOperation not attached', () => {
+        it('should not attach the class exception decorator', () => {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException([CustomNotFoundException, NotFoundException])
+          class GroupTest {
+            test() {
+              return;
+            }
+          }
+
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+          expect(meta).toBeUndefined();
+        });
       });
     });
   });

@@ -31,6 +31,8 @@ export function buildTemplatedApiExceptionDecorator(template: any, globalOptions
  * This shows exceptions with status code, description and grouped with example values. If there are multiple exceptions
  * per status codes, all matching exceptions will be grouped and shown as examples.
  *
+ * When using as class decorator, the exceptions will be attached to all methods which have a @ApiOperation decorator.
+ *
  * @param exceptionsArg Pass one or more exceptions which should be shown in Swagger API documentation
  * @param options Set a template or specify the content type
  */
@@ -43,27 +45,39 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
     const mergedOptions = mergeOptions(options);
     const { content, status } = buildContent(instances, mergedOptions);
 
-    const existing = getExistingExamples({ target, descriptor });
-    if (existing?.[status]) {
+    const existingExamples = getExistingExamples({ target, descriptor });
+    if (existingExamples?.[status]) {
       const {
         [status]: { content: existingContent },
-      } = existing;
+      } = existingExamples;
 
       merge(existingContent, content);
     } else {
-      // Just pass decorator args to ApiResponse... no need to use Reflect here :)
-      ApiResponse({
-        status,
-        content,
-      })(target, propertyKey, descriptor);
+      if (descriptor) {
+        ApiResponse({ status, content })(target, propertyKey, descriptor);
+      } else if (target) {
+        applyClassDecoratorToAllMethods(target, exceptionsArg, options);
+      }
     }
 
-    if (descriptor) {
-      return descriptor;
-    }
-
-    return target;
+    return descriptor ? descriptor : target;
   };
+}
+
+function applyClassDecoratorToAllMethods<T extends HttpException>(
+  target: any,
+  exceptionsArg: ExceptionsArguments<T>,
+  options?: Options,
+) {
+  for (const key of Object.getOwnPropertyNames(target.prototype)) {
+    const methodDescriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
+    if (methodDescriptor) {
+      const metadata = Reflect.getMetadata(DECORATORS.API_OPERATION, methodDescriptor.value);
+      if (metadata) {
+        ApiException(exceptionsArg, options)(target, key, methodDescriptor);
+      }
+    }
+  }
 }
 
 function getExistingExamples({
