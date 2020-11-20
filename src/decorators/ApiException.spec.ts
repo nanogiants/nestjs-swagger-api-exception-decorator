@@ -242,45 +242,37 @@ describe('Decorator', () => {
                     examples: {
                       CustomBadRequestException: {
                         description: 'Bad Request',
-                        value: {
-                          statusCode: 400,
-                          description: 'Bad Request',
-                        },
+                        value: { description: 'Bad Request', statusCode: 400 },
                       },
                     },
                   },
                 },
                 description: '',
+                isArray: undefined,
+                type: undefined,
               },
               '404': {
                 content: {
                   'application/json': {
                     examples: {
-                      CustomNotFoundExceptionWithArrayMessage: {
-                        description: 'hallo',
-                        value: {
-                          statusCode: 404,
-                          description: 'hallo',
-                        },
-                      },
                       CustomNotFoundException: {
                         description: 'Not Found',
-                        value: {
-                          statusCode: 404,
-                          description: 'Not Found',
-                        },
+                        value: { description: 'Not Found', statusCode: 404 },
+                      },
+                      CustomNotFoundExceptionWithArrayMessage: {
+                        description: 'hallo',
+                        value: { description: 'hallo', statusCode: 404 },
                       },
                       NotFoundException: {
                         description: 'Not Found',
-                        value: {
-                          statusCode: 404,
-                          description: 'Not Found',
-                        },
+                        value: { description: 'Not Found', statusCode: 404 },
                       },
                     },
                   },
                 },
                 description: '',
+                isArray: undefined,
+                type: undefined,
               },
             }),
           );
@@ -302,6 +294,56 @@ describe('Decorator', () => {
 
           expect(meta).toBeUndefined();
         });
+      });
+    });
+
+    describe('when method has the same exception attached multiple times, but with different descriptions', () => {
+      it('should group the exceptions properly', () => {
+        @TemplatedApiException(CustomBadRequestException, { description: 'One more at class level' })
+        class GroupTest1 {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException(CustomBadRequestException, { description: 'Test' })
+          @TemplatedApiException(CustomBadRequestException, { description: 'One more just for testing' })
+          @ApiOperation({})
+          test() {
+            return;
+          }
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest1.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+        expect(meta).toEqual(
+          expect.objectContaining({
+            '400': {
+              content: {
+                'application/json': {
+                  examples: {
+                    'CustomBadRequestException #1': {
+                      description: 'One more just for testing',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #2': {
+                      description: 'Test',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #3': {
+                      description: 'Bad Request',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #4': {
+                      description: 'One more at class level',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                  },
+                },
+              },
+              description: '',
+              isArray: undefined,
+              type: undefined,
+            },
+          }),
+        );
       });
     });
   });

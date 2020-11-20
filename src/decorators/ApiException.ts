@@ -1,4 +1,4 @@
-import merge from 'lodash.merge';
+import { MetaContent } from 'interfaces/ApiResponse';
 
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
@@ -45,13 +45,13 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
     const mergedOptions = mergeOptions(options);
     const { content, status } = buildContent(instances, mergedOptions);
 
-    const existingExamples = getExistingExamples({ target, descriptor });
-    if (existingExamples?.[status]) {
+    const existingContent = getExistingContent(target, descriptor);
+    if (existingContent?.[status]) {
       const {
-        [status]: { content: existingContent },
-      } = existingExamples;
+        [status]: { content: existing },
+      } = existingContent;
 
-      merge(existingContent, content);
+      mergeContent(existing, content);
     } else {
       if (descriptor) {
         ApiResponse({ status, content })(target, propertyKey, descriptor);
@@ -62,6 +62,49 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
 
     return descriptor ? descriptor : target;
   };
+}
+
+function mergeContent(existing: ContentObject, newContent: ContentObject) {
+  for (const key of Object.keys(newContent)) {
+    if (existing[key]) {
+      const { examples } = existing[key];
+      const { examples: newExamples } = newContent[key];
+
+      for (const newExampleKey of Object.keys(newExamples)) {
+        const existingExampleKeys = Object.keys(examples);
+        const matchingExampleKeys = existingExampleKeys.filter(
+          eKey => eKey.startsWith(`${newExampleKey} #`) || eKey === newExampleKey,
+        );
+
+        if (matchingExampleKeys.length) {
+          let startingNumber = matchingExampleKeys.reduce((acc, val) => {
+            const SEPARATOR = ' #';
+            const indexOfNo = val.lastIndexOf(SEPARATOR);
+
+            if (indexOfNo >= 0) {
+              const number = parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
+              if (number > acc) {
+                return number;
+              }
+            }
+
+            return acc;
+          }, 0);
+
+          if (startingNumber === 0) {
+            examples[`${newExampleKey} #${++startingNumber}`] = examples[newExampleKey];
+            delete examples[newExampleKey];
+          }
+
+          examples[`${newExampleKey} #${++startingNumber}`] = newExamples[newExampleKey];
+        } else {
+          examples[newExampleKey] = newExamples[newExampleKey];
+        }
+      }
+    } else {
+      existing[key] = newContent[key];
+    }
+  }
 }
 
 function applyClassDecoratorToAllMethods<T extends HttpException>(
@@ -80,13 +123,7 @@ function applyClassDecoratorToAllMethods<T extends HttpException>(
   }
 }
 
-function getExistingExamples({
-  target,
-  descriptor,
-}: {
-  target?: any;
-  descriptor?: PropertyDescriptor;
-}): Record<string, ContentObject> {
+function getExistingContent(target?: any, descriptor?: PropertyDescriptor): Record<string, MetaContent> {
   if (descriptor) {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
   } else if (target) {
