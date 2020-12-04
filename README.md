@@ -7,17 +7,38 @@ https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator
 
 NestJS Swagger decorator for specifying API exceptions. This is a wrapper for `@ApiResponse(...)` which uses `message` and `status` inside NestJS `HttpException` as description and HTTP status code in the Swagger documentation. You can pass any subclass of `HttpException` to the decorator. This decorator is especially useful if you want to define multiple custom exceptions per status code.
 
-When using custom exceptions it's names will be used as example name in API documentation. If multiple exceptions with the same name exist, the description will be extended by the additional exceptions description.
+When using custom exceptions it's names will be used as example name in API documentation. If multiple exceptions with the same name exist, the exceptions with the same name will be consecutively numbered.
+
+# TODOs:
+
+- [ ] Documentation
+  - [ ] Explain class wide decorator usage including API_OPERATION decorator requirement
 
 # Examples
 
-Using `@ApiException` decorator without any template:
+## `@ApiException` decorator without any template
+
+When using the decorator without specifying any template, only the description of the exception will be visible.
 
 <img src="./resources/decorator.png" width="500"/>
 
-Using templated `@TemplatedApiException` decorator with a template:
+## `@TemplatedApiException` decorator with a template
+
+When using the decorator built with the `buildTemplatedApiExceptionDecorator()` method you can specify any template which should be visible.
 
 <img src="./resources/decorator_with_template.png" width="500"/>
+
+## Decorator with multiple exceptions per status code
+
+When specifying multiple exceptions per status code, they will be visible as separated examples.
+
+<img src="./resources/decorator_with_multiple_exceptions_per_code.png" width="500"/>
+
+## Decorator with multiple exceptions per status code and same name
+
+When specifying multiple exceptions per status code with the same name, they are visible as separate examples consecutively numbered.
+
+<img src="./resources/decorator_with_multiple_exceptions_per_code_same_name.png" width="500"/>
 
 # Installation
 
@@ -92,6 +113,8 @@ export class UserController {
 
 ## With template
 
+When using a exception filter, you may want to specify the template of response body in your exception examples.
+
 Build your own templated `@ApiException` decorator like this:
 
 ```typescript
@@ -133,7 +156,7 @@ You may use the available placeholders:
 - `$status`: replaces the placeholder by the status code specified in the exception
 - `$description`: replaces the placeholder by the message/description specified in the exception
 
-## `(template: any, options?: Options)` Description
+# `(template: any, options?: Options)` Description
 
 * `template`: pass any template object (may include any placeholder as previously described)
 * `options`
