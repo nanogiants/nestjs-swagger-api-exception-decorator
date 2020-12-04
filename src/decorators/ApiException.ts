@@ -1,4 +1,4 @@
-import { MetaContent } from 'interfaces/ApiResponse';
+import { Examples, MetaContent } from 'interfaces/ApiResponse';
 
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
@@ -70,39 +70,43 @@ function mergeContent(existing: ContentObject, newContent: ContentObject) {
       const { examples } = existing[key];
       const { examples: newExamples } = newContent[key];
 
-      for (const newExampleKey of Object.keys(newExamples)) {
-        const existingExampleKeys = Object.keys(examples);
-        const matchingExampleKeys = existingExampleKeys.filter(
-          eKey => eKey.startsWith(`${newExampleKey} #`) || eKey === newExampleKey,
-        );
-
-        if (matchingExampleKeys.length) {
-          let startingNumber = matchingExampleKeys.reduce((acc, val) => {
-            const SEPARATOR = ' #';
-            const indexOfNo = val.lastIndexOf(SEPARATOR);
-
-            if (indexOfNo >= 0) {
-              const number = parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
-              if (number > acc) {
-                return number;
-              }
-            }
-
-            return acc;
-          }, 0);
-
-          if (startingNumber === 0) {
-            examples[`${newExampleKey} #${++startingNumber}`] = examples[newExampleKey];
-            delete examples[newExampleKey];
-          }
-
-          examples[`${newExampleKey} #${++startingNumber}`] = newExamples[newExampleKey];
-        } else {
-          examples[newExampleKey] = newExamples[newExampleKey];
-        }
-      }
+      mergeExamples(examples, newExamples);
     } else {
       existing[key] = newContent[key];
+    }
+  }
+}
+
+function mergeExamples(examples: Examples, newExamples: Examples) {
+  for (const newExampleKey of Object.keys(newExamples)) {
+    const existingExampleKeys = Object.keys(examples);
+    const matchingExampleKeys = existingExampleKeys.filter(
+      eKey => eKey.startsWith(`${newExampleKey} #`) || eKey === newExampleKey,
+    );
+
+    if (matchingExampleKeys.length) {
+      let startingNumber = matchingExampleKeys.reduce((acc, val) => {
+        const SEPARATOR = ' #';
+        const indexOfNo = val.lastIndexOf(SEPARATOR);
+
+        if (indexOfNo >= 0) {
+          const number = parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
+          if (number > acc) {
+            return number;
+          }
+        }
+
+        return acc;
+      }, 0);
+
+      if (startingNumber === 0) {
+        examples[`${newExampleKey} #${++startingNumber}`] = examples[newExampleKey];
+        delete examples[newExampleKey];
+      }
+
+      examples[`${newExampleKey} #${++startingNumber}`] = newExamples[newExampleKey];
+    } else {
+      examples[newExampleKey] = newExamples[newExampleKey];
     }
   }
 }
@@ -165,7 +169,7 @@ function printWarningIfStatusCodesDoNotMatch(exceptions: HttpException[], target
 function buildContent(exceptions: HttpException[], options: Options) {
   const status = exceptions[0].getStatus();
 
-  const examples: Record<string, ExampleObject | ReferenceObject> = {};
+  const examples: Examples = {};
   const content = { [options.contentType]: { examples } };
 
   for (const instance of exceptions) {
@@ -183,17 +187,12 @@ function buildContent(exceptions: HttpException[], options: Options) {
 
     const exampleName = instance.constructor.name;
 
-    if (examples[exampleName]) {
-      const existingDescription = examples[exampleName] as ExampleObject;
-      examples[exampleName] = {
-        description: `${existingDescription.description} | ${options.description || instance.message}`,
-      };
-    } else {
-      examples[exampleName] = {
+    mergeExamples(examples, {
+      [exampleName]: {
         description: options.description || instance.message,
         value: copy,
-      };
-    }
+      },
+    });
   }
 
   return { content, status };

@@ -346,5 +346,50 @@ describe('Decorator', () => {
         );
       });
     });
+
+    describe('when method has the same exception attached multiple times, but with different instantiated exceptions', () => {
+      it('should group the exceptions properly', () => {
+        class GroupTest2 {
+          @TemplatedApiException([new BadRequestException('test'), new BadRequestException('test 2')])
+          @ApiOperation({})
+          test() {
+            return;
+          }
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest2.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+        expect(meta).toEqual(
+          expect.objectContaining({
+            '400': {
+              content: {
+                'application/json': {
+                  examples: {
+                    'BadRequestException #1': {
+                      description: 'test',
+                      value: {
+                        statusCode: 400,
+                        description: 'test',
+                      },
+                    },
+                    'BadRequestException #2': {
+                      description: 'test 2',
+                      value: {
+                        statusCode: 400,
+                        description: 'test 2',
+                      },
+                    },
+                  },
+                },
+              },
+              description: '',
+              isArray: undefined,
+              type: undefined,
+            },
+          }),
+        );
+      });
+    });
   });
 });
