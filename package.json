@@ -31,6 +31,8 @@
     "@nestjs/core": "^7.5.5",
     "@nestjs/swagger": "^4.7.5",
     "@types/jest": "^26.0.16",
+    "class-transformer": "^0.3.1",
+    "class-validator": "^0.12.2",
     "husky": "^4.3.0",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
