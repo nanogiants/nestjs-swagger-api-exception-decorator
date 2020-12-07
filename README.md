@@ -9,11 +9,6 @@ NestJS Swagger decorator for specifying API exceptions. This is a wrapper for `@
 
 When using custom exceptions it's names will be used as example name in API documentation. If multiple exceptions with the same name exist, the exceptions with the same name will be consecutively numbered.
 
-# TODOs:
-
-- [ ] Documentation
-  - [ ] Explain class wide decorator usage including API_OPERATION decorator requirement
-
 # Examples
 
 ## `@ApiException` decorator without any template
@@ -156,12 +151,16 @@ You may use the available placeholders:
 - `$status`: replaces the placeholder by the status code specified in the exception
 - `$description`: replaces the placeholder by the message/description specified in the exception
 
-# `(template: any, options?: Options)` Description
+### `(template: any, options?: Options)` Description
 
 * `template`: pass any template object (may include any placeholder as previously described)
 * `options`
   * `template`: Specify template here. Specifying template here again, overwrites globally set template. DEFAULT: `undefined`
   * `contentType`: Specify content type. DEFAULT: `application/json`
+
+## At class level
+
+When applying the default or templated decorator at class level, it will only be applied to all class methods which are decorated by the `@ApiOperation` decorator.
 
 # License
 
