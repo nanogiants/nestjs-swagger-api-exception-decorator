@@ -1,7 +1,8 @@
 // tslint:disable: max-classes-per-file
 
 import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { buildTemplatedApiExceptionDecorator } from './ApiException';
 
@@ -10,43 +11,38 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   description: '$description',
 });
 
+const { ApiOperation: ActualApiOperation, ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
+
 jest.mock('@nestjs/swagger', () => {
   return {
-    ApiResponse: jest.fn((...args: any[]) => {
-      // tslint:disable-next-line: no-empty
-      return (...args1: any[]) => {};
-    }),
+    ApiResponse: jest.fn((options: ApiResponseOptions) => ActualApiResponse(options)),
+    ApiOperation: (options: ApiOperationOptions) => ActualApiOperation(options),
   };
 });
 
-export class CustomBadRequestException extends BadRequestException {
+class CustomBadRequestException extends BadRequestException {
   constructor() {
     super('Bad Request');
   }
 }
 
-export class CustomBadRequestException2 extends BadRequestException {
+class CustomBadRequestException2 extends BadRequestException {
   constructor() {
     super('Bad Request 2');
   }
 }
 
-export class CustomNotFoundException extends NotFoundException {
+class CustomNotFoundException extends NotFoundException {
   constructor() {
     super('Not Found');
   }
 }
 
-export class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
+class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
   constructor(messages: string[]) {
     super(messages.join(', '));
   }
 }
-
-export class AnyException {}
-
-@TemplatedApiException(CustomNotFoundException)
-export class Test {}
 
 describe('Decorator', () => {
   const ApiResponseMock = ApiResponse as jest.Mock<typeof ApiResponse>;
@@ -55,7 +51,7 @@ describe('Decorator', () => {
     ApiResponseMock.mockClear();
   });
 
-  describe('@ApiExceptions', () => {
+  describe('@ApiException - multiple exceptions', () => {
     describe('given valid subclassed HttpExceptions', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -65,29 +61,31 @@ describe('Decorator', () => {
           }
         }
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 400,
-          content: {
-            'application/json': {
-              examples: {
-                CustomBadRequestException: {
-                  description: 'Bad Request',
-                  value: {
-                    statusCode: 400,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 400,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomBadRequestException: {
                     description: 'Bad Request',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request',
+                    },
                   },
-                },
-                CustomBadRequestException2: {
-                  description: 'Bad Request 2',
-                  value: {
-                    statusCode: 400,
+                  CustomBadRequestException2: {
                     description: 'Bad Request 2',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request 2',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
 
@@ -113,34 +111,36 @@ describe('Decorator', () => {
 
         expect(spy).toBeCalled();
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 400,
-          content: {
-            'application/json': {
-              examples: {
-                CustomBadRequestException: {
-                  description: 'Bad Request',
-                  value: {
-                    statusCode: 400,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 400,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomBadRequestException: {
                     description: 'Bad Request',
+                    value: {
+                      statusCode: 400,
+                      description: 'Bad Request',
+                    },
                   },
-                },
-                NotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+                  NotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
   });
 
-  describe('@ApiException', () => {
+  describe('@ApiException - single exception', () => {
     describe('given valid subclassed HttpException', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -150,66 +150,246 @@ describe('Decorator', () => {
           }
         }
 
-        expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-          status: 404,
-          content: {
-            'application/json': {
-              examples: {
-                NotFoundException: {
-                  description: 'Not Found',
-                  value: {
-                    statusCode: 404,
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  NotFoundException: {
                     description: 'Not Found',
+                    value: {
+                      statusCode: 404,
+                      description: 'Not Found',
+                    },
                   },
                 },
               },
             },
-          },
-        });
+          }),
+        );
       });
     });
-  });
 
-  describe('given a directly instantiated exception', () => {
-    it('should should use the already instantiated exception', () => {
-      class Ignore {
-        @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
-        test() {
-          return;
-        }
-      }
-
-      expect(ApiResponseMock.mock.calls[0][0]).toEqual({
-        status: 404,
-        content: {
-          'application/json': {
-            examples: {
-              CustomNotFoundExceptionWithArrayMessage: {
-                description: 'hallo',
-                value: {
-                  statusCode: 404,
-                  description: 'hallo',
-                },
-              },
-            },
-          },
-        },
-      });
-    });
-  });
-
-  describe('given a non instantiated exception', () => {
-    it('should should use the already instantiated exception', () => {
-      try {
+    describe('given a directly instantiated exception', () => {
+      it('should should use the already instantiated exception', () => {
         class Ignore {
-          @TemplatedApiException(CustomNotFoundExceptionWithArrayMessage)
+          @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
           test() {
             return;
           }
         }
-      } catch (error) {
-        expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
-      }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            status: 404,
+            content: {
+              'application/json': {
+                examples: {
+                  CustomNotFoundExceptionWithArrayMessage: {
+                    description: 'hallo',
+                    value: {
+                      statusCode: 404,
+                      description: 'hallo',
+                    },
+                  },
+                },
+              },
+            },
+          }),
+        );
+      });
+    });
+
+    describe('given a non instantiated exception', () => {
+      it('should should use the already instantiated exception', () => {
+        try {
+          class Ignore {
+            @TemplatedApiException(CustomNotFoundExceptionWithArrayMessage)
+            test() {
+              return;
+            }
+          }
+        } catch (error) {
+          expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
+        }
+      });
+    });
+  });
+
+  describe('usage of multiple @ApiException', () => {
+    describe('given multiple @ApiException decorators', () => {
+      describe('when method has @ApiOperation attached', () => {
+        it('should be grouped correctly', () => {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException([CustomNotFoundException, NotFoundException])
+          class GroupTest {
+            @ApiOperation({ description: 'test' })
+            @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+            test() {
+              return;
+            }
+          }
+
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+          expect(meta).toEqual(
+            expect.objectContaining({
+              '400': {
+                content: {
+                  'application/json': {
+                    examples: {
+                      CustomBadRequestException: {
+                        description: 'Bad Request',
+                        value: { description: 'Bad Request', statusCode: 400 },
+                      },
+                    },
+                  },
+                },
+                description: '',
+                isArray: undefined,
+                type: undefined,
+              },
+              '404': {
+                content: {
+                  'application/json': {
+                    examples: {
+                      CustomNotFoundException: {
+                        description: 'Not Found',
+                        value: { description: 'Not Found', statusCode: 404 },
+                      },
+                      CustomNotFoundExceptionWithArrayMessage: {
+                        description: 'hallo',
+                        value: { description: 'hallo', statusCode: 404 },
+                      },
+                      NotFoundException: {
+                        description: 'Not Found',
+                        value: { description: 'Not Found', statusCode: 404 },
+                      },
+                    },
+                  },
+                },
+                description: '',
+                isArray: undefined,
+                type: undefined,
+              },
+            }),
+          );
+        });
+      });
+
+      describe('when method has @ApiOperation not attached', () => {
+        it('should not attach the class exception decorator', () => {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException([CustomNotFoundException, NotFoundException])
+          class GroupTest {
+            test() {
+              return;
+            }
+          }
+
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+          expect(meta).toBeUndefined();
+        });
+      });
+    });
+
+    describe('when method has the same exception attached multiple times, but with different descriptions', () => {
+      it('should group the exceptions properly', () => {
+        @TemplatedApiException(CustomBadRequestException, { description: 'One more at class level' })
+        class GroupTest1 {
+          @TemplatedApiException(CustomBadRequestException)
+          @TemplatedApiException(CustomBadRequestException, { description: 'Test' })
+          @TemplatedApiException(CustomBadRequestException, { description: 'One more just for testing' })
+          @ApiOperation({})
+          test() {
+            return;
+          }
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest1.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+        expect(meta).toEqual(
+          expect.objectContaining({
+            '400': {
+              content: {
+                'application/json': {
+                  examples: {
+                    'CustomBadRequestException #1': {
+                      description: 'One more just for testing',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #2': {
+                      description: 'Test',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #3': {
+                      description: 'Bad Request',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                    'CustomBadRequestException #4': {
+                      description: 'One more at class level',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                  },
+                },
+              },
+              description: '',
+              isArray: undefined,
+              type: undefined,
+            },
+          }),
+        );
+      });
+    });
+
+    describe('when method has the same exception attached multiple times, but with different instantiated exceptions', () => {
+      it('should group the exceptions properly', () => {
+        class GroupTest2 {
+          @TemplatedApiException([new BadRequestException('test'), new BadRequestException('test 2')])
+          @ApiOperation({})
+          test() {
+            return;
+          }
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest2.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+        expect(meta).toEqual(
+          expect.objectContaining({
+            '400': {
+              content: {
+                'application/json': {
+                  examples: {
+                    'BadRequestException #1': {
+                      description: 'test',
+                      value: {
+                        statusCode: 400,
+                        description: 'test',
+                      },
+                    },
+                    'BadRequestException #2': {
+                      description: 'test 2',
+                      value: {
+                        statusCode: 400,
+                        description: 'test 2',
+                      },
+                    },
+                  },
+                },
+              },
+              description: '',
+              isArray: undefined,
+              type: undefined,
+            },
+          }),
+        );
+      });
     });
   });
 });

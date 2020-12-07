@@ -26,3 +26,4 @@ tslint.json
 *.tgz
 jest.config.js
 tsconfig.build.json
+resources

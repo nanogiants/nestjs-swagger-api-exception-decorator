@@ -1,2 +1,5 @@
 node_modules/
 dist/
+coverage/
+*.tar.gz
+*.tgz
