@@ -66,14 +66,10 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
 
 function mergeContent(existing: ContentObject, newContent: ContentObject) {
   for (const key of Object.keys(newContent)) {
-    if (existing[key]) {
-      const { examples } = existing[key];
-      const { examples: newExamples } = newContent[key];
+    const { examples } = existing[key];
+    const { examples: newExamples } = newContent[key];
 
-      mergeExamples(examples, newExamples);
-    } else {
-      existing[key] = newContent[key];
-    }
+    mergeExamples(examples, newExamples);
   }
 }
 
