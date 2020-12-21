@@ -3,7 +3,7 @@ import { Examples, MetaContent } from 'interfaces/ApiResponse';
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
-import { ContentObject, ExampleObject, ReferenceObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 import { Exception, ExceptionsArguments } from '../interfaces/Exceptions';
 import { Options } from '../interfaces/Options';
@@ -15,17 +15,17 @@ import { Options } from '../interfaces/Options';
  * @param template Any object describing the template which should be shown as example value
  * @param globalOptions Specify the content type
  */
-export function buildTemplatedApiExceptionDecorator(template: any, globalOptions?: Omit<Options, 'template'>) {
-  function decoratorBuilder<T extends HttpException>(exceptions: ExceptionsArguments<T>, options?: Options) {
+export const buildTemplatedApiExceptionDecorator = (template: unknown, globalOptions?: Omit<Options, 'template'>) => {
+  const decoratorBuilder = <T extends HttpException>(exceptions: ExceptionsArguments<T>, options?: Options) => {
     return ApiException(exceptions, {
       ...globalOptions,
       template,
       ...options,
     });
-  }
+  };
 
   return decoratorBuilder;
-}
+};
 
 /**
  * This shows exceptions with status code, description and grouped with example values. If there are multiple exceptions
@@ -36,7 +36,7 @@ export function buildTemplatedApiExceptionDecorator(template: any, globalOptions
  * @param exceptionsArg Pass one or more exceptions which should be shown in Swagger API documentation
  * @param options Set a template or specify the content type
  */
-export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsArguments<T>, options?: Options) {
+export const ApiException = <T extends HttpException>(exceptionsArg: ExceptionsArguments<T>, options?: Options) => {
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
     const exceptions: Exception<T>[] = Array.isArray(exceptionsArg) ? exceptionsArg : [exceptionsArg];
     const instances = instantiateExceptions(exceptions);
@@ -62,18 +62,18 @@ export function ApiException<T extends HttpException>(exceptionsArg: ExceptionsA
 
     return descriptor ? descriptor : target;
   };
-}
+};
 
-function mergeContent(existing: ContentObject, newContent: ContentObject) {
+const mergeContent = (existing: ContentObject, newContent: ContentObject) => {
   for (const key of Object.keys(newContent)) {
     const { examples } = existing[key];
     const { examples: newExamples } = newContent[key];
 
     mergeExamples(examples, newExamples);
   }
-}
+};
 
-function mergeExamples(examples: Examples, newExamples: Examples) {
+const mergeExamples = (examples: Examples, newExamples: Examples) => {
   for (const newExampleKey of Object.keys(newExamples)) {
     const existingExampleKeys = Object.keys(examples);
     const matchingExampleKeys = existingExampleKeys.filter(
@@ -105,33 +105,34 @@ function mergeExamples(examples: Examples, newExamples: Examples) {
       examples[newExampleKey] = newExamples[newExampleKey];
     }
   }
-}
+};
 
-function applyClassDecoratorToAllMethods<T extends HttpException>(
-  target: any,
+const applyClassDecoratorToAllMethods = <T extends HttpException>(
+  target: () => void,
   exceptionsArg: ExceptionsArguments<T>,
   options?: Options,
-) {
+) => {
   for (const key of Object.getOwnPropertyNames(target.prototype)) {
     const methodDescriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
     if (methodDescriptor) {
       const metadata = Reflect.getMetadata(DECORATORS.API_OPERATION, methodDescriptor.value);
       if (metadata) {
-        ApiException(exceptionsArg, options)(target, key, methodDescriptor);
+        const decorator = ApiException(exceptionsArg, options);
+        decorator(target, key, methodDescriptor);
       }
     }
   }
-}
+};
 
-function getExistingContent(target?: any, descriptor?: PropertyDescriptor): Record<string, MetaContent> {
+const getExistingContent = (target?: any, descriptor?: PropertyDescriptor): Record<string, MetaContent> => {
   if (descriptor) {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
   } else if (target) {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
   }
-}
+};
 
-function instantiateExceptions(exceptionsArgs: Exception<HttpException>[]) {
+const instantiateExceptions = (exceptionsArgs: Exception<HttpException>[]) => {
   return exceptionsArgs.map(exception => {
     if (typeof exception === 'object') {
       return exception;
@@ -151,18 +152,19 @@ function instantiateExceptions(exceptionsArgs: Exception<HttpException>[]) {
       throw err;
     }
   });
-}
+};
 
-function printWarningIfStatusCodesDoNotMatch(exceptions: HttpException[], target: any, propertyKey: string) {
+const printWarningIfStatusCodesDoNotMatch = (exceptions: HttpException[], target: any, propertyKey: string) => {
   if (new Set(exceptions.map(exception => exception.getStatus())).size !== 1) {
-    // tslint:disable-next-line: no-console
+    // eslint-disable-next-line no-console
     console.warn(
+      // eslint-disable-next-line max-len, @typescript-eslint/restrict-template-expressions
       `@ApiException(): Please inspect exceptions in decorator. Not all statusses are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
     );
   }
-}
+};
 
-function buildContent(exceptions: HttpException[], options: Options) {
+const buildContent = (exceptions: HttpException[], options: Options) => {
   const status = exceptions[0].getStatus();
 
   const examples: Examples = {};
@@ -192,9 +194,9 @@ function buildContent(exceptions: HttpException[], options: Options) {
   }
 
   return { content, status };
-}
+};
 
-function mergeOptions(options: Options) {
+const mergeOptions = (options: Options) => {
   return Object.assign(
     {
       contentType: 'application/json',
@@ -203,4 +205,4 @@ function mergeOptions(options: Options) {
     } as Options,
     options,
   );
-}
+};

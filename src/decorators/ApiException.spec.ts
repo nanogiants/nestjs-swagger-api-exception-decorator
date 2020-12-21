@@ -1,4 +1,10 @@
-// tslint:disable: max-classes-per-file
+/* eslint-disable
+  max-classes-per-file,
+  @typescript-eslint/no-unsafe-member-access,
+  @typescript-eslint/no-unsafe-assignment,
+  @typescript-eslint/no-unsafe-call,
+  @typescript-eslint/no-unused-vars
+*/
 
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
@@ -11,11 +17,14 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   description: '$description',
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 const { ApiOperation: ActualApiOperation, ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
 
 jest.mock('@nestjs/swagger', () => {
   return {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     ApiResponse: jest.fn((options: ApiResponseOptions) => ActualApiResponse(options)),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     ApiOperation: (options: ApiOperationOptions) => ActualApiOperation(options),
   };
 });
@@ -93,7 +102,7 @@ describe('Decorator', () => {
       let spy: jest.SpyInstance;
 
       beforeEach(() => {
-        // tslint:disable-next-line: no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         spy = jest.spyOn(global.console, 'warn').mockImplementation(() => {});
       });
 
