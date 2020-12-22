@@ -158,7 +158,7 @@ const printWarningIfStatusCodesDoNotMatch = (exceptions: HttpException[], target
   if (new Set(exceptions.map(exception => exception.getStatus())).size !== 1) {
     // eslint-disable-next-line no-console
     console.warn(
-      // eslint-disable-next-line max-len, @typescript-eslint/restrict-template-expressions
+      // eslint-disable-next-line max-len
       `@ApiException(): Please inspect exceptions in decorator. Not all statusses are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
     );
   }
