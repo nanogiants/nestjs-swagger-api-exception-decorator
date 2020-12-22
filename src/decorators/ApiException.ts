@@ -1,12 +1,11 @@
-import { Examples, MetaContent } from 'interfaces/ApiResponse';
-
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { Exception, ExceptionsArguments } from '../interfaces/Exceptions';
-import { Options } from '../interfaces/Options';
+import { Examples, MetaContent } from '../interfaces/ApiResponse.interface';
+import { Exception, ExceptionsArguments } from '../interfaces/Exceptions.interface';
+import { Options } from '../interfaces/Options.interface';
 
 /**
  * Build your own custom decorator. This enables you to re-use the same template again without the need to specify it
