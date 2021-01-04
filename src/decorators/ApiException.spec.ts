@@ -1,4 +1,4 @@
-// tslint:disable: max-classes-per-file
+/* eslint-disable max-classes-per-file, @typescript-eslint/no-unused-vars */
 
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
@@ -93,7 +93,7 @@ describe('Decorator', () => {
       let spy: jest.SpyInstance;
 
       beforeEach(() => {
-        // tslint:disable-next-line: no-empty
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
         spy = jest.spyOn(global.console, 'warn').mockImplementation(() => {});
       });
 
