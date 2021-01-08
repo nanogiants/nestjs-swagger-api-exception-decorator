@@ -29,7 +29,7 @@ export const printWarningIfStatusCodesDoNotMatch = (exceptions: HttpException[],
     // eslint-disable-next-line no-console
     console.warn(
       // eslint-disable-next-line max-len
-      `@ApiException(): Please inspect exceptions in decorator. Not all statusses are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
+      `@ApiException(): Please inspect exceptions in decorator. Not all status codes are equal! (Class-name: ${target.constructor.name}, Method: ${propertyKey})`,
     );
   }
 };
