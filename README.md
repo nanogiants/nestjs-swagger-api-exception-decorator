@@ -10,7 +10,7 @@ https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator
 $ npm install @nanogiants/nestjs-swagger-api-exception-decorator
 ```
 
-## Usage
+## Example usage
 
 ```typescript
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
@@ -29,7 +29,7 @@ export class Controller {
 
 ## Documentation
 
-Please visit the documentation page for more examples and information, such as body templates, placeholders etc.
+Please visit the [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/) for more examples and information, such as body templates, placeholders etc.
 
 ## License
 
