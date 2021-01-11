@@ -61,3 +61,16 @@ export class UserController {
   }
 }
 ```
+
+### Configuration (placeholders)
+
+The `buildTemplatedApiExceptionDecorator` function takes two arguments:
+
+- `template`: pass any template object (may include any placeholder as previously described)
+- `options`
+  - `contentType`: Specify content type. DEFAULT: `application/json`
+
+#### Available placeholders
+
+- `$status`: replaces the placeholder by the status code specified in the exception
+- `$description`: replaces the placeholder by the message/description specified in the exception
