@@ -17,11 +17,7 @@ module.exports = {
       {
         type: 'category',
         label: 'Usage',
-        items: [
-          'gettingstarted/usage/simple',
-          'gettingstarted/usage/custom',
-          // 'gettingstarted/usage/template',
-        ],
+        items: ['gettingstarted/usage/simple', 'gettingstarted/usage/custom', 'gettingstarted/usage/templated'],
       },
     ],
   },
