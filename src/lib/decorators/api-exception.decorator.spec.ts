@@ -4,7 +4,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
-import { buildTemplatedApiExceptionDecorator } from '../';
+import { ApiException, buildTemplatedApiExceptionDecorator } from '../';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
@@ -49,6 +49,66 @@ describe('Decorator', () => {
 
   beforeEach(() => {
     ApiResponseMock.mockClear();
+  });
+
+  describe('@ApiException - single exception', () => {
+    describe('given valid NestJS built in exception without template or description', () => {
+      it('should use the default template', () => {
+        class Ignore {
+          @ApiException(BadRequestException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            content: {
+              'application/json': {
+                examples: {
+                  BadRequestException: {
+                    description: 'Bad Request',
+                    value: {
+                      message: 'Bad Request',
+                      statusCode: 400,
+                    },
+                  },
+                },
+              },
+            },
+          }),
+        );
+      });
+    });
+
+    describe('given valid NestJS built in exception without template but with description', () => {
+      it('should use the default template', () => {
+        class Ignore {
+          @ApiException(BadRequestException, { description: 'This is a test' })
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            content: {
+              'application/json': {
+                examples: {
+                  BadRequestException: {
+                    description: 'This is a test',
+                    value: {
+                      message: 'Bad Request',
+                      statusCode: 400,
+                    },
+                  },
+                },
+              },
+            },
+          }),
+        );
+      });
+    });
   });
 
   describe('@ApiException - multiple exceptions', () => {
