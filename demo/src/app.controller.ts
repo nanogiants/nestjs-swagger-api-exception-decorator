@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller,
   NotFoundException,
   Patch,
@@ -60,5 +61,16 @@ export class AppController {
   @TemplatedApiException([MissingPropertyException, PayloadMissingException])
   putResource() {
     return 'resource has been updated';
+  }
+
+  @Put('/exception')
+  @ApiOperation({
+    summary: 'This is an example with an error',
+  })
+  @ApiException(BadRequestException, {
+    description: 'Required attributes were missing',
+  })
+  throwException() {
+    throw new BadRequestException();
   }
 }
