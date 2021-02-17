@@ -11,16 +11,18 @@ There are two ways of defining a template:
 
 ## Use the configuration object
 
-When using the `@ApiException` decorator you can additionally pass a object. In previous sections you may have seen, that you can specify a `description`. Additionally you can pass a `template` which then will be used to display the example response in SwaggerUI. For example:
+When using the `@ApiException` decorator you can additionally pass an object. In previous sections you may have seen, that you can specify a `description`. Additionally you can pass a `template` which then will be used to display the example response in SwaggerUI. For example:
 
 ```typescript
-@ApiException(BadRequestException, { template: {
-  statusCode: '$status',
-  timestamp: '01.01.1970T15:30:11',
-  path: 'string',
-  message: '$description',
-  reasons: 'string',
-}})
+@ApiException(BadRequestException, {
+  template: {
+    statusCode: '$status',
+    timestamp: '01.01.1970T15:30:11',
+    path: 'string',
+    message: '$description',
+    reasons: 'string',
+  }
+})
 ```
 
 Please keep in mind, that the specified template will **only** be used for this decorator and not for other documented `@ApiException` decorators and therefore has to be defined in each `@ApiException` decorator. If you want to re-use the template for all `@ApiException` decorators, we recommend using the builder function.
@@ -62,13 +64,13 @@ export class UserController {
 }
 ```
 
-### Configuration (placeholders)
+### Configuration
 
 The `buildTemplatedApiExceptionDecorator` function takes two arguments:
 
-- `template`: pass any template object (may include any placeholder as previously described)
+- `template`: pass any template object (may include any placeholder)
 - `options`
-  - `contentType`: Specify content type. DEFAULT: `application/json`
+  - `contentType`: Specify content type. Default: `application/json`
 
 #### Available placeholders
 
