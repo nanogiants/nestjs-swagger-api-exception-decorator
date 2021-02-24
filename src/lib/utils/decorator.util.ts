@@ -9,9 +9,9 @@ import { Options } from '../interfaces/options.interface';
 export const getApiResponseContent = (target?: any, descriptor?: PropertyDescriptor): Record<string, MetaContent> => {
   if (descriptor) {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
-  } else {
-    return Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
   }
+
+  return Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
 };
 
 export const applyClassDecorator = <T extends HttpException>(
@@ -21,12 +21,10 @@ export const applyClassDecorator = <T extends HttpException>(
 ) => {
   for (const key of Object.getOwnPropertyNames(target.prototype)) {
     const methodDescriptor = Object.getOwnPropertyDescriptor(target.prototype, key);
-    if (methodDescriptor) {
-      const metadata = Reflect.getMetadata(DECORATORS.API_OPERATION, methodDescriptor.value);
-      if (metadata) {
-        const decorator = ApiException(exceptions, options);
-        decorator(target, key, methodDescriptor);
-      }
+    const metadata = Reflect.getMetadata(DECORATORS.API_OPERATION, methodDescriptor.value);
+    if (metadata) {
+      const decorator = ApiException(exceptions, options);
+      decorator(target, key, methodDescriptor);
     }
   }
 };

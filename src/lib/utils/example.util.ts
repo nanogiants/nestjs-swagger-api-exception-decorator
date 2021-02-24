@@ -14,9 +14,7 @@ export const merge = (examples: Examples, newExamples: Examples) => {
 
         if (indexOfNo >= 0) {
           const number = parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
-          if (number > acc) {
-            return number;
-          }
+          return number;
         }
 
         return acc;
