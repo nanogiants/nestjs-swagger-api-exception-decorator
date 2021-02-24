@@ -198,9 +198,60 @@ describe('Decorator', () => {
         );
       });
     });
+
+    describe('given valid HttpExceptions should be consecutive numbered', () => {
+      it('should build the api-response payload properly', () => {
+        class Ignore {
+          @TemplatedApiException(NotFoundException)
+          @TemplatedApiException(BadRequestException)
+          @TemplatedApiException(NotFoundException)
+          test() {
+            return;
+          }
+        }
+
+        const descriptor = Object.getOwnPropertyDescriptor(Ignore.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+        expect(meta).toEqual(
+          expect.objectContaining({
+            '400': {
+              content: {
+                'application/json': {
+                  examples: {
+                    BadRequestException: {
+                      description: 'Bad Request',
+                      value: { description: 'Bad Request', statusCode: 400 },
+                    },
+                  },
+                },
+              },
+              description: '',
+            },
+            '404': {
+              content: {
+                'application/json': {
+                  examples: {
+                    'NotFoundException #1': {
+                      description: 'Not Found',
+                      value: { description: 'Not Found', statusCode: 404 },
+                    },
+                    'NotFoundException #2': {
+                      description: 'Not Found',
+                      value: { description: 'Not Found', statusCode: 404 },
+                    },
+                  },
+                },
+              },
+              description: '',
+            },
+          }),
+        );
+      });
+    });
   });
 
-  describe('@ApiException - single exception', () => {
+  describe('@TemplatedApiException - single exception', () => {
     describe('given valid subclassed HttpException', () => {
       it('should build the api-response payload properly', () => {
         class Ignore {
@@ -273,6 +324,68 @@ describe('Decorator', () => {
         } catch (error) {
           expect(error.message.indexOf('Could not instantiate exception')).toBe(0);
         }
+      });
+    });
+
+    describe('given a template which does not contain an available placeholder', () => {
+      const Decorator = buildTemplatedApiExceptionDecorator({ test: 'test' });
+
+      it('should should use the already instantiated exception', () => {
+        class Ignore {
+          @Decorator(NotFoundException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            content: {
+              'application/json': {
+                examples: {
+                  NotFoundException: {
+                    description: 'Not Found',
+                    value: {
+                      test: 'test',
+                    },
+                  },
+                },
+              },
+            },
+            description: '',
+            status: 404,
+          }),
+        );
+      });
+    });
+
+    describe('given no template', () => {
+      const Decorator = buildTemplatedApiExceptionDecorator(null);
+
+      it('should should use the already instantiated exception', () => {
+        class Ignore {
+          @Decorator(NotFoundException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            content: {
+              'application/json': {
+                examples: {
+                  NotFoundException: {
+                    description: 'Not Found',
+                    value: null,
+                  },
+                },
+              },
+            },
+            description: '',
+            status: 404,
+          }),
+        );
       });
     });
   });

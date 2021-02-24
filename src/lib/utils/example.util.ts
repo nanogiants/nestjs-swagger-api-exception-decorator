@@ -13,10 +13,7 @@ export const merge = (examples: Examples, newExamples: Examples) => {
         const indexOfNo = val.lastIndexOf(SEPARATOR);
 
         if (indexOfNo >= 0) {
-          const number = parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
-          if (number > acc) {
-            return number;
-          }
+          return parseInt(val.substring(indexOfNo + SEPARATOR.length), 10);
         }
 
         return acc;

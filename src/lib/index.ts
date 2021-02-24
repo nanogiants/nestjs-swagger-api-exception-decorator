@@ -12,15 +12,13 @@ import { Options } from './interfaces/options.interface';
  * @param globalOptions Specify the content type
  */
 export const buildTemplatedApiExceptionDecorator = (template: unknown, globalOptions?: Omit<Options, 'template'>) => {
-  const decoratorBuilder = <T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options) => {
+  return <T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options) => {
     return ApiException(exceptions, {
       ...globalOptions,
       template,
       ...options,
     });
   };
-
-  return decoratorBuilder;
 };
 
 export { ApiException };
