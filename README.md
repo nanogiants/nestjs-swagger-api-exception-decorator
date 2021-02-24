@@ -1,6 +1,9 @@
-# @nanogiants/nestjs-swagger-api-exception-decorator ![Node.js CI](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI/badge.svg?branch=master) ![npm](https://img.shields.io/npm/v/@nanogiants/nestjs-swagger-api-exception-decorator)
+# @nanogiants/nestjs-swagger-api-exception-decorator
 
-https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator
+[![Node.js CI](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanogiants_nestjs-swagger-api-exception-decorator&metric=alert_status)](https://sonarcloud.io/dashboard?id=nanogiants_nestjs-swagger-api-exception-decorator)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nanogiants_nestjs-swagger-api-exception-decorator&metric=coverage)](https://sonarcloud.io/dashboard?id=nanogiants_nestjs-swagger-api-exception-decorator)
+[![npm](https://img.shields.io/npm/v/@nanogiants/nestjs-swagger-api-exception-decorator)](https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator)
 
 > NestJS Swagger decorator for API exceptions
 
