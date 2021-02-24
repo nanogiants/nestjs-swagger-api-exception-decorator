@@ -33,7 +33,7 @@ export const ApiException = <T extends HttpException>(exceptions: ExceptionArgum
     } else {
       if (descriptor) {
         ApiResponse({ status: statusCode, content: newExampleContent })(target, propertyKey, descriptor);
-      } else if (target) {
+      } else {
         applyClassDecorator(target, exceptions, options);
       }
     }

@@ -9,11 +9,9 @@ import { Options } from '../interfaces/options.interface';
 export const getApiResponseContent = (target?: any, descriptor?: PropertyDescriptor): Record<string, MetaContent> => {
   if (descriptor) {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
-  } else if (target) {
+  } else {
     return Reflect.getMetadata(DECORATORS.API_RESPONSE, target);
   }
-
-  return {};
 };
 
 export const applyClassDecorator = <T extends HttpException>(
