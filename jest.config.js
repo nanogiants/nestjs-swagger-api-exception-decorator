@@ -7,5 +7,6 @@ module.exports = {
   },
   rootDir: './src',
   testRegex: '.spec.ts$',
+  coverageDirectory: '../coverage',
   verbose: true,
 };
