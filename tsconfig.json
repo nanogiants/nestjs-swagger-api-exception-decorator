@@ -13,5 +13,5 @@
     "esModuleInterop": true,
     "incremental": true
   },
-  "exclude": ["node_modules", "dist", "demo", "documentation"]
+  "exclude": ["node_modules", "dist", "demo/*", "documentation/*"]
 }
