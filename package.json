@@ -5,8 +5,10 @@
   "main": "./dist/index",
   "types": "./dist/index",
   "scripts": {
-    "prepublishOnly": "rimraf dist && tsc -b tsconfig.build.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run clean && tsc -b tsconfig.build.json",
     "lint": "eslint -c .eslintrc.js --ext .ts src",
+    "lint:all": "npm run lint && cd demo && npm run lint",
     "prepack": "npm run lint && npm run prepublishOnly",
     "test": "jest"
   },
