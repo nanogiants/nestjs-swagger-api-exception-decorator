@@ -1,11 +1,9 @@
 name: Node.js CI
 
-# on:
-#   push:
-#     tags:
-#       - v*
-
-on: [push]
+on:
+  push:
+    tags:
+      - v*
 
 jobs:
   build:
@@ -20,10 +18,9 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
-      # - run: npm publish --access public
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
-
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
       - uses: actions/setup-node@v1
         with:
           node-version: 12
