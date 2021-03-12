@@ -19,7 +19,7 @@ jobs:
           node-version: 12
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm run lint
+      - run: npm run lint:all
       - run: npm test -- --coverage
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
