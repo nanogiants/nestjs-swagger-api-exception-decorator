@@ -21,7 +21,7 @@ export const mergeOptions = (options?: Options): MergedOptions => {
 
   if (options) {
     // Needed because we need to determine later if the used template is the default template or a user defined template
-    mergedOptions.userDefinedTemplate = !!options?.template;
+    mergedOptions.userDefinedTemplate = !!options.template;
   }
 
   return mergedOptions;
