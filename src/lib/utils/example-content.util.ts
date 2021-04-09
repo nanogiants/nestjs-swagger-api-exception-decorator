@@ -24,13 +24,9 @@ const resolvePlaceholders = (template: any, exception: HttpException) => {
 };
 
 export const resolveTemplatePlaceholders = (template: any, exception: HttpException) => {
-  if (template && typeof template === 'object') {
-    const copy = JSON.parse(JSON.stringify(template));
-    resolvePlaceholders(copy, exception);
-    return copy;
-  }
-
-  return null;
+  const copy = JSON.parse(JSON.stringify(template));
+  resolvePlaceholders(copy, exception);
+  return copy;
 };
 
 export const buildContentObject = (exceptions: HttpException[], options: Options) => {
