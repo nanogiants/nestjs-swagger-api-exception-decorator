@@ -316,6 +316,54 @@ Object {
 }
 `;
 
+exports[`Decorator @ApiException - single exception given valid NestJS built in exception without template but with type and isArray equal true should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {
+            "error": "Bad Request",
+            "message": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "error": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "message": Object {
+            "items": Object {
+              "$ref": "#/components/schemas/SwaggerAnnotations",
+              "type": "object",
+            },
+            "type": "array",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
 exports[`Decorator @ApiException - single exception given valid NestJS built in exception without template but with type should use the default template 1`] = `
 Object {
   "content": Object {

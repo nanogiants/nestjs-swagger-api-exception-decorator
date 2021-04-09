@@ -7,6 +7,7 @@ export interface Options {
   schema?: SchemaObject | ReferenceObject;
   // eslint-disable-next-line @typescript-eslint/ban-types
   type?: () => string | Function;
+  isArray?: boolean;
 }
 
 export interface MergedOptions extends Options {

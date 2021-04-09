@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Body,
   Controller,
   NotFoundException,
   Patch,
@@ -18,12 +17,7 @@ import {
   MissingPropertyException,
   PayloadMissingException,
 } from './exceptions';
-import {
-  ApiBody,
-  ApiExtraModels,
-  ApiOperation,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiExtraModels, ApiOperation, getSchemaPath } from '@nestjs/swagger';
 import { SwaggerAnnotations } from './swagger-annotations';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
@@ -65,6 +59,16 @@ export class AppController {
   @ApiOperation({ summary: 'Log something' })
   @ApiException(BadRequestException, { type: () => SwaggerAnnotations })
   logSomething() {
+    return 'something logged';
+  }
+
+  @Post('/log/array')
+  @ApiOperation({ summary: 'Log something' })
+  @ApiException(BadRequestException, {
+    type: () => SwaggerAnnotations,
+    isArray: true,
+  })
+  logSomethingArray() {
     return 'something logged';
   }
 

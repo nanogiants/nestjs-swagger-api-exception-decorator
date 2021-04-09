@@ -133,6 +133,22 @@ describe('Decorator', () => {
         expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
       });
     });
+
+    describe('given valid NestJS built in exception without template but with type and isArray equal true', () => {
+      it('should use the default template', () => {
+        class Ignore {
+          @ApiException(BadRequestException, {
+            type: () => SwaggerAnnotations,
+            isArray: true,
+          })
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
+      });
+    });
   });
 
   describe('@ApiException - multiple exceptions', () => {

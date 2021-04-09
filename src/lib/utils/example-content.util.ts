@@ -3,7 +3,7 @@ import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.int
 
 import { Options } from '../interfaces/options.interface';
 import { merge } from './example.util';
-import { generateAndApplySchema } from './schema.util';
+import { buildSchema } from './schema.util';
 
 const PlaceholderExceptionMapping = {
   $status: 'getStatus',
@@ -33,11 +33,7 @@ export const buildContentObject = (exceptions: HttpException[], options: Options
   const content: ContentObject = { [options.contentType]: { examples: {} } };
 
   const instance = exceptions[0];
-  generateAndApplySchema({
-    content,
-    options,
-    exception: instance,
-  });
+  content[options.contentType].schema = buildSchema(options, instance);
 
   for (const exception of exceptions) {
     const exampleResponse = resolveTemplatePlaceholders(options.template, exception);
