@@ -5,16 +5,22 @@ import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } fr
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { SwaggerAnnotations } from './type/swagger-annotation';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
   description: '$description',
 });
 
-const { ApiOperation: ActualApiOperation, ApiResponse: ActualApiResponse } = jest.requireActual('@nestjs/swagger');
-
 jest.mock('@nestjs/swagger', () => {
+  const {
+    ApiOperation: ActualApiOperation,
+    ApiResponse: ActualApiResponse,
+    ...otherImplementations
+  } = jest.requireActual('@nestjs/swagger');
+
   return {
+    ...otherImplementations,
     ApiResponse: jest.fn((options: ApiResponseOptions) => ActualApiResponse(options)),
     ApiOperation: (options: ApiOperationOptions) => ActualApiOperation(options),
   };
@@ -103,6 +109,21 @@ describe('Decorator', () => {
                 test: {},
               },
             },
+          })
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
+      });
+    });
+
+    describe('given valid NestJS built in exception without template but with type', () => {
+      it('should use the default template', () => {
+        class Ignore {
+          @ApiException(BadRequestException, {
+            type: () => SwaggerAnnotations,
           })
           test() {
             return;

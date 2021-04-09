@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Body,
   Controller,
   NotFoundException,
   Patch,
@@ -17,7 +18,13 @@ import {
   MissingPropertyException,
   PayloadMissingException,
 } from './exceptions';
-import { ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiExtraModels,
+  ApiOperation,
+  getSchemaPath,
+} from '@nestjs/swagger';
+import { SwaggerAnnotations } from './swagger-annotations';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
@@ -29,6 +36,7 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
 
 @Controller()
 @ApiException(UnauthorizedException, { description: 'User is not authorized' })
+@ApiExtraModels(SwaggerAnnotations)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -51,6 +59,22 @@ export class AppController {
   })
   updateResource() {
     return 'resource has been updated';
+  }
+
+  @Post('/log')
+  @ApiOperation({ summary: 'Log something' })
+  @ApiException(BadRequestException, { type: () => SwaggerAnnotations })
+  logSomething() {
+    return 'something logged';
+  }
+
+  @Post('/schema')
+  @ApiOperation({ summary: 'Schema testing' })
+  @ApiException(BadRequestException, {
+    schema: { $ref: getSchemaPath('SwaggerAnnotations') },
+  })
+  schemaTest() {
+    return 'something logged';
   }
 
   @Put()

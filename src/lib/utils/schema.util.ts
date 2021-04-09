@@ -1,5 +1,6 @@
 import { HttpException } from '@nestjs/common';
-import { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+import { getSchemaPath } from '@nestjs/swagger';
+import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 import { MergedOptions } from '../interfaces/options.interface';
 import { SchemaOptions } from '../interfaces/schema.interface';
@@ -9,10 +10,16 @@ import { DefaultTemplateRequiredProperties } from './options.util';
 const buildSchema = (options: MergedOptions, exception: HttpException): SchemaObject => {
   const resolvedTemplate = resolveTemplatePlaceholders(options.template, exception);
 
-  const properties: Record<string, SchemaObject> = {};
+  const properties: Record<string, SchemaObject | ReferenceObject> = {};
   for (const [key, value] of Object.entries(resolvedTemplate)) {
-    if (key === 'message' && options.schema && !options.userDefinedTemplate) {
-      properties[key] = options.schema;
+    if (key === 'message' && !options.userDefinedTemplate && (options.schema || options.type)) {
+      if (options.schema) {
+        properties[key] = options.schema;
+      } else {
+        properties[key] = {
+          $ref: getSchemaPath(options.type()),
+        };
+      }
     } else {
       properties[key] = {
         type: typeof value,
