@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file, @typescript-eslint/no-unused-vars */
 
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
@@ -69,6 +69,7 @@ describe('Decorator', () => {
                   BadRequestException: {
                     description: 'Bad Request',
                     value: {
+                      error: 'Bad Request',
                       message: 'Bad Request',
                       statusCode: 400,
                     },
@@ -76,6 +77,37 @@ describe('Decorator', () => {
                 },
               },
             },
+          }),
+        );
+      });
+    });
+
+    describe('given valid NestJS built in exception (forbidden exception) without template or description', () => {
+      it('should use the default template including the error property', () => {
+        class Ignore {
+          @ApiException(ForbiddenException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            content: {
+              'application/json': {
+                examples: {
+                  ForbiddenException: {
+                    description: 'Forbidden',
+                    value: {
+                      error: 'Forbidden',
+                      message: 'Forbidden',
+                      statusCode: 403,
+                    },
+                  },
+                },
+              },
+            },
+            status: 403,
           }),
         );
       });
@@ -98,6 +130,7 @@ describe('Decorator', () => {
                   BadRequestException: {
                     description: 'This is a test',
                     value: {
+                      error: 'Bad Request',
                       message: 'Bad Request',
                       statusCode: 400,
                     },
@@ -444,8 +477,6 @@ describe('Decorator', () => {
                   },
                 },
                 description: '',
-                isArray: undefined,
-                type: undefined,
               },
             }),
           );
@@ -512,8 +543,6 @@ describe('Decorator', () => {
                 },
               },
               description: '',
-              isArray: undefined,
-              type: undefined,
             },
           }),
         );
@@ -557,8 +586,6 @@ describe('Decorator', () => {
                 },
               },
               description: '',
-              isArray: undefined,
-              type: undefined,
             },
           }),
         );
