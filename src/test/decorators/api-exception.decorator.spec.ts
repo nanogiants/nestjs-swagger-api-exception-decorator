@@ -61,7 +61,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception without template or description', () => {
       it('should use the default template', () => {
         class Ignore {
-          @ApiException(BadRequestException)
+          @ApiException(() => BadRequestException)
           test() {
             return;
           }
@@ -74,7 +74,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception (forbidden exception) without template or description', () => {
       it('should use the default template including the error property', () => {
         class Ignore {
-          @ApiException(ForbiddenException)
+          @ApiException(() => ForbiddenException)
           test() {
             return;
           }
@@ -87,7 +87,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception without template but with description', () => {
       it('should use the default template', () => {
         class Ignore {
-          @ApiException(BadRequestException, { description: 'This is a test' })
+          @ApiException(() => BadRequestException, { description: 'This is a test' })
           test() {
             return;
           }
@@ -100,7 +100,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception without template but with description and schema', () => {
       it('should use the default template', () => {
         class Ignore {
-          @ApiException(BadRequestException, {
+          @ApiException(() => BadRequestException, {
             description: 'This is a test',
             schema: {
               description: 'custom schema',
@@ -122,7 +122,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception without template but with type', () => {
       it('should use the default template', () => {
         class Ignore {
-          @ApiException(BadRequestException, {
+          @ApiException(() => BadRequestException, {
             type: () => SwaggerAnnotations,
           })
           test() {
@@ -137,7 +137,7 @@ describe('Decorator', () => {
     describe('given valid NestJS built in exception without template but with type and isArray equal true', () => {
       it('should use the default template', () => {
         class Ignore {
-          @ApiException(BadRequestException, {
+          @ApiException(() => BadRequestException, {
             type: () => SwaggerAnnotations,
             isArray: true,
           })
