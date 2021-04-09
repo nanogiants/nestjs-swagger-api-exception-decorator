@@ -4,7 +4,7 @@ import { ApiResponse } from '@nestjs/swagger';
 import { ExceptionArguments } from '../interfaces/exceptions.interface';
 import { Options } from '../interfaces/options.interface';
 import { applyClassDecorator, getApiResponseContent } from '../utils/decorator.util';
-import { buildExampleContent, mergeExampleContent } from '../utils/example-content.util';
+import { buildContentObject, mergeExampleContent } from '../utils/example-content.util';
 import { instantiateExceptions, printWarningIfStatusCodesDoNotMatch } from '../utils/exception.util';
 import { mergeOptions } from '../utils/options.util';
 
@@ -20,7 +20,7 @@ import { mergeOptions } from '../utils/options.util';
 export const ApiException = <T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options) => {
   const mergedOptions = mergeOptions(options);
   const instances = instantiateExceptions(exceptions);
-  const newExampleContent = buildExampleContent(instances, mergedOptions);
+  const contentObject = buildContentObject(instances, mergedOptions);
   const statusCode = instances[0].getStatus();
 
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
@@ -28,11 +28,11 @@ export const ApiException = <T extends HttpException>(exceptions: ExceptionArgum
 
     const content = getApiResponseContent(target, descriptor);
     if (content?.[statusCode]) {
-      const exampleContent = content[statusCode].content;
-      mergeExampleContent(exampleContent, newExampleContent);
+      const existingContent = content[statusCode].content;
+      mergeExampleContent(existingContent, contentObject);
     } else {
       if (descriptor) {
-        ApiResponse({ status: statusCode, content: newExampleContent })(target, propertyKey, descriptor);
+        ApiResponse({ status: statusCode, content: contentObject })(target, propertyKey, descriptor);
       } else {
         applyClassDecorator(target, exceptions, options);
       }

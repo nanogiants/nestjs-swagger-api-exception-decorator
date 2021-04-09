@@ -10,7 +10,8 @@
     "lint": "eslint -c .eslintrc.js --ext .ts src",
     "lint:all": "npm run lint && cd demo && npm run lint",
     "prepack": "npm run lint && npm run prepublishOnly",
-    "test": "jest"
+    "test": "jest",
+    "test:update-snapshots": "jest -u"
   },
   "keywords": [
     "nestjs",

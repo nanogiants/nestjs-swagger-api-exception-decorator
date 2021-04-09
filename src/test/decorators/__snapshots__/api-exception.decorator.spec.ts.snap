@@ -1,0 +1,724 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Decorator @ApiException - multiple exceptions given exceptions mismatching http status codes should build the api-response payload properly but print a warning too 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "CustomBadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {
+            "description": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+        "NotFoundException": Object {
+          "description": "Not Found",
+          "value": Object {
+            "description": "Not Found",
+            "statusCode": 404,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "description": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "description",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @ApiException - multiple exceptions given valid HttpExceptions should be consecutive numbered should build the api-response payload properly 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "BadRequestException": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "NotFoundException #1": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "statusCode": 404,
+            },
+          },
+          "NotFoundException #2": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "statusCode": 404,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Not Found",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 404,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
+exports[`Decorator @ApiException - multiple exceptions given valid subclassed HttpExceptions should build the api-response payload properly 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "CustomBadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {
+            "description": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+        "CustomBadRequestException2": Object {
+          "description": "Bad Request 2",
+          "value": Object {
+            "description": "Bad Request 2",
+            "statusCode": 400,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "description": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "description",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @ApiException - single exception given valid NestJS built in exception (forbidden exception) without template or description should use the default template including the error property 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "ForbiddenException": Object {
+          "description": "Forbidden",
+          "value": Object {
+            "error": "Forbidden",
+            "message": "Forbidden",
+            "statusCode": 403,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "error": Object {
+            "example": "Forbidden",
+            "type": "string",
+          },
+          "message": Object {
+            "example": "Forbidden",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 403,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 403,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @ApiException - single exception given valid NestJS built in exception without template but with description and schema should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "This is a test",
+          "value": Object {
+            "error": "Bad Request",
+            "message": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+      },
+      "schema": Object {
+        "description": "This is a test",
+        "properties": Object {
+          "error": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "message": Object {
+            "description": "custom schema",
+            "examples": Object {
+              "test": Object {},
+            },
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @ApiException - single exception given valid NestJS built in exception without template but with description should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "This is a test",
+          "value": Object {
+            "error": "Bad Request",
+            "message": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+      },
+      "schema": Object {
+        "description": "This is a test",
+        "properties": Object {
+          "error": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "message": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @ApiException - single exception given valid NestJS built in exception without template or description should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {
+            "error": "Bad Request",
+            "message": "Bad Request",
+            "statusCode": 400,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "error": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "message": Object {
+            "example": "Bad Request",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 400,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @TemplatedApiException - single exception given a directly instantiated exception should should use the already instantiated exception 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "CustomNotFoundExceptionWithArrayMessage": Object {
+          "description": "hallo",
+          "value": Object {
+            "description": "hallo",
+            "statusCode": 404,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "description": Object {
+            "example": "hallo",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 404,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "description",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 404,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @TemplatedApiException - single exception given a template which does not contain an available placeholder should should use the already instantiated exception 1`] = `
+Object {
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "NotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "test": "test",
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "test": Object {
+              "example": "test",
+              "type": "string",
+            },
+          },
+          "required": Array [
+            "test",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
+exports[`Decorator @TemplatedApiException - single exception given no template should should use the already instantiated exception 1`] = `
+Object {
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "NotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "error": "Not Found",
+              "message": "Not Found",
+              "statusCode": 404,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "error": Object {
+              "example": "Not Found",
+              "type": "string",
+            },
+            "message": Object {
+              "example": "Not Found",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 404,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "message",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
+exports[`Decorator @TemplatedApiException - single exception given valid subclassed HttpException should build the api-response payload properly 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "NotFoundException": Object {
+          "description": "Not Found",
+          "value": Object {
+            "description": "Not Found",
+            "statusCode": 404,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "description": Object {
+            "example": "Not Found",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 404,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "description",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 404,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator usage of multiple @ApiException given multiple @ApiException decorators when method has @ApiOperation attached should be grouped correctly 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomBadRequestException": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomNotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "statusCode": 404,
+            },
+          },
+          "CustomNotFoundExceptionWithArrayMessage": Object {
+            "description": "hallo",
+            "value": Object {
+              "description": "hallo",
+              "statusCode": 404,
+            },
+          },
+          "NotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "statusCode": 404,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "hallo",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 404,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
+exports[`Decorator usage of multiple @ApiException when method has the same exception attached multiple times, but with different descriptions should group the exceptions properly 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomBadRequestException #1": Object {
+            "description": "One more just for testing",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+          "CustomBadRequestException #2": Object {
+            "description": "Test",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+          "CustomBadRequestException #3": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+          "CustomBadRequestException #4": Object {
+            "description": "One more at class level",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": "One more just for testing",
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
+exports[`Decorator usage of multiple @ApiException when method has the same exception attached multiple times, but with different instantiated exceptions should group the exceptions properly 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "BadRequestException #1": Object {
+            "description": "test",
+            "value": Object {
+              "description": "test",
+              "statusCode": 400,
+            },
+          },
+          "BadRequestException #2": Object {
+            "description": "test 2",
+            "value": Object {
+              "description": "test 2",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "test",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
