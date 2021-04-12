@@ -166,18 +166,7 @@ describe('Decorator', () => {
     });
 
     describe('given exceptions mismatching http status codes', () => {
-      let spy: jest.SpyInstance;
-
-      beforeEach(() => {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        spy = jest.spyOn(global.console, 'warn').mockImplementation(() => {});
-      });
-
-      afterEach(() => {
-        spy.mockRestore();
-      });
-
-      it('should build the api-response payload properly but print a warning too', () => {
+      it('should build the api-response payload properly', () => {
         class ShowWarningButBuildCorrectPayload {
           @TemplatedApiException(() => [CustomBadRequestException, NotFoundException])
           test() {
@@ -185,9 +174,10 @@ describe('Decorator', () => {
           }
         }
 
-        expect(spy).toBeCalled();
+        const descriptor = Object.getOwnPropertyDescriptor(ShowWarningButBuildCorrectPayload.prototype, 'test');
+        const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
-        expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
+        expect(meta).toMatchSnapshot();
       });
     });
 

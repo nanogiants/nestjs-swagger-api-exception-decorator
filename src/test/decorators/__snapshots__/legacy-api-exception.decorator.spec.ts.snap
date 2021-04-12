@@ -144,10 +144,6 @@ Object {
           "description": "Bad Request",
           "value": Object {},
         },
-        "NotFoundException": Object {
-          "description": "Not Found",
-          "value": Object {},
-        },
       },
       "schema": Object {
         "description": undefined,

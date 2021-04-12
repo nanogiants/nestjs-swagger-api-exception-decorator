@@ -1,49 +1,79 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Decorator @ApiException - multiple exceptions given exceptions mismatching http status codes should build the api-response payload properly but print a warning too 1`] = `
+exports[`Decorator @ApiException - multiple exceptions given exceptions mismatching http status codes should build the api-response payload properly 1`] = `
 Object {
-  "content": Object {
-    "application/json": Object {
-      "examples": Object {
-        "CustomBadRequestException": Object {
-          "description": "Bad Request",
-          "value": Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomBadRequestException": Object {
             "description": "Bad Request",
-            "statusCode": 400,
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
           },
         },
-        "NotFoundException": Object {
-          "description": "Not Found",
-          "value": Object {
-            "description": "Not Found",
-            "statusCode": 404,
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
           },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
         },
-      },
-      "schema": Object {
-        "description": undefined,
-        "properties": Object {
-          "description": Object {
-            "example": "Bad Request",
-            "type": "string",
-          },
-          "statusCode": Object {
-            "example": 400,
-            "type": "number",
-          },
-        },
-        "required": Array [
-          "statusCode",
-          "description",
-        ],
-        "type": "object",
       },
     },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
   },
-  "description": "",
-  "isArray": undefined,
-  "status": 400,
-  "type": undefined,
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "NotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "statusCode": 404,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Not Found",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 404,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "description",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
 }
 `;
 

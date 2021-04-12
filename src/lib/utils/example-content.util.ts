@@ -29,13 +29,17 @@ export const resolveTemplatePlaceholders = (template: any, exception: HttpExcept
   return copy;
 };
 
-export const buildContentObject = (exceptions: HttpException[], options: Options) => {
-  const content: ContentObject = { [options.contentType]: { examples: {} } };
-
-  const instance = exceptions[0];
-  content[options.contentType].schema = buildSchema(options, instance);
-
+export const buildContentObjects = (exceptions: HttpException[], options: Options) => {
+  const contents: Record<number, ContentObject> = {};
   for (const exception of exceptions) {
+    const statusCode = exception.getStatus();
+    if (!contents[statusCode]) {
+      contents[statusCode] = { [options.contentType]: { examples: {} } };
+      contents[statusCode][options.contentType].schema = buildSchema(options, exception);
+    }
+
+    const content = contents[statusCode];
+
     const exampleResponse = resolveTemplatePlaceholders(options.template, exception);
 
     merge(content[options.contentType].examples, {
@@ -46,7 +50,7 @@ export const buildContentObject = (exceptions: HttpException[], options: Options
     });
   }
 
-  return content;
+  return contents;
 };
 
 export const mergeExampleContent = (content: ContentObject, newContent: ContentObject) => {
