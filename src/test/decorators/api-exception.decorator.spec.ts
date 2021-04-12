@@ -60,7 +60,7 @@ describe('Decorator', () => {
   describe('@ApiException - single exception', () => {
     describe('given valid NestJS built in exception without template or description', () => {
       it('should use the default template', () => {
-        class Ignore {
+        class DefaultTemplate {
           @ApiException(() => BadRequestException)
           test() {
             return;
@@ -73,7 +73,7 @@ describe('Decorator', () => {
 
     describe('given valid NestJS built in exception (forbidden exception) without template or description', () => {
       it('should use the default template including the error property', () => {
-        class Ignore {
+        class DefaultTemplateWithError {
           @ApiException(() => ForbiddenException)
           test() {
             return;
@@ -86,7 +86,7 @@ describe('Decorator', () => {
 
     describe('given valid NestJS built in exception without template but with description', () => {
       it('should use the default template', () => {
-        class Ignore {
+        class DefaultTemplateWithDescription {
           @ApiException(() => BadRequestException, { description: 'This is a test' })
           test() {
             return;
@@ -121,7 +121,7 @@ describe('Decorator', () => {
 
     describe('given valid NestJS built in exception without template but with type', () => {
       it('should use the default template', () => {
-        class Ignore {
+        class DefaultTemplateWithType {
           @ApiException(() => BadRequestException, {
             type: () => SwaggerAnnotations,
           })
@@ -136,7 +136,7 @@ describe('Decorator', () => {
 
     describe('given valid NestJS built in exception without template but with type and isArray equal true', () => {
       it('should use the default template', () => {
-        class Ignore {
+        class DefaultTemplateWithTypeAndIsArray {
           @ApiException(() => BadRequestException, {
             type: () => SwaggerAnnotations,
             isArray: true,
@@ -154,8 +154,8 @@ describe('Decorator', () => {
   describe('@ApiException - multiple exceptions', () => {
     describe('given valid subclassed HttpExceptions', () => {
       it('should build the api-response payload properly', () => {
-        class Ignore {
-          @TemplatedApiException([CustomBadRequestException, CustomBadRequestException2])
+        class CorrectPayload {
+          @TemplatedApiException(() => [CustomBadRequestException, CustomBadRequestException2])
           test() {
             return;
           }
@@ -178,8 +178,8 @@ describe('Decorator', () => {
       });
 
       it('should build the api-response payload properly but print a warning too', () => {
-        class Ignore {
-          @TemplatedApiException([CustomBadRequestException, NotFoundException])
+        class ShowWarningButBuildCorrectPayload {
+          @TemplatedApiException(() => [CustomBadRequestException, NotFoundException])
           test() {
             return;
           }
@@ -193,16 +193,16 @@ describe('Decorator', () => {
 
     describe('given valid HttpExceptions should be consecutive numbered', () => {
       it('should build the api-response payload properly', () => {
-        class Ignore {
-          @TemplatedApiException(NotFoundException)
-          @TemplatedApiException(BadRequestException)
-          @TemplatedApiException(NotFoundException)
+        class GroupedPayload {
+          @TemplatedApiException(() => NotFoundException)
+          @TemplatedApiException(() => BadRequestException)
+          @TemplatedApiException(() => NotFoundException)
           test() {
             return;
           }
         }
 
-        const descriptor = Object.getOwnPropertyDescriptor(Ignore.prototype, 'test');
+        const descriptor = Object.getOwnPropertyDescriptor(GroupedPayload.prototype, 'test');
         const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
         expect(meta).toMatchSnapshot();
@@ -213,8 +213,8 @@ describe('Decorator', () => {
   describe('@TemplatedApiException - single exception', () => {
     describe('given valid subclassed HttpException', () => {
       it('should build the api-response payload properly', () => {
-        class Ignore {
-          @TemplatedApiException(NotFoundException)
+        class SingleExceptionCorrectPayload {
+          @TemplatedApiException(() => NotFoundException)
           test() {
             return;
           }
@@ -226,8 +226,8 @@ describe('Decorator', () => {
 
     describe('given a directly instantiated exception', () => {
       it('should should use the already instantiated exception', () => {
-        class Ignore {
-          @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+        class InstantiatedException {
+          @TemplatedApiException(() => new CustomNotFoundExceptionWithArrayMessage(['hallo']))
           test() {
             return;
           }
@@ -240,8 +240,8 @@ describe('Decorator', () => {
     describe('given a non instantiated exception', () => {
       it('should should use the already instantiated exception', () => {
         try {
-          class Ignore {
-            @TemplatedApiException(CustomNotFoundExceptionWithArrayMessage)
+          class NonInstantiableException {
+            @TemplatedApiException(() => CustomNotFoundExceptionWithArrayMessage)
             test() {
               return;
             }
@@ -256,14 +256,14 @@ describe('Decorator', () => {
       const Decorator = buildTemplatedApiExceptionDecorator({ test: 'test' });
 
       it('should should use the already instantiated exception', () => {
-        class Ignore {
-          @Decorator(NotFoundException)
+        class TemplateWithoutPlaceholder {
+          @Decorator(() => NotFoundException)
           test() {
             return;
           }
         }
 
-        const descriptor = Object.getOwnPropertyDescriptor(Ignore.prototype, 'test');
+        const descriptor = Object.getOwnPropertyDescriptor(TemplateWithoutPlaceholder.prototype, 'test');
         const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
         expect(meta).toMatchSnapshot();
@@ -274,14 +274,14 @@ describe('Decorator', () => {
       const Decorator = buildTemplatedApiExceptionDecorator(null);
 
       it('should should use the already instantiated exception', () => {
-        class Ignore {
-          @Decorator(NotFoundException)
+        class NoTemplate {
+          @Decorator(() => NotFoundException)
           test() {
             return;
           }
         }
 
-        const descriptor = Object.getOwnPropertyDescriptor(Ignore.prototype, 'test');
+        const descriptor = Object.getOwnPropertyDescriptor(NoTemplate.prototype, 'test');
         const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
         expect(meta).toMatchSnapshot();
@@ -293,17 +293,17 @@ describe('Decorator', () => {
     describe('given multiple @ApiException decorators', () => {
       describe('when method has @ApiOperation attached', () => {
         it('should be grouped correctly', () => {
-          @TemplatedApiException(CustomBadRequestException)
-          @TemplatedApiException([CustomNotFoundException, NotFoundException])
-          class GroupTest {
+          @TemplatedApiException(() => CustomBadRequestException)
+          @TemplatedApiException(() => [CustomNotFoundException, NotFoundException])
+          class GroupTest1 {
             @ApiOperation({ description: 'test' })
-            @TemplatedApiException(new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+            @TemplatedApiException(() => new CustomNotFoundExceptionWithArrayMessage(['hallo']))
             test() {
               return;
             }
           }
 
-          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest1.prototype, 'test');
           const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
           expect(meta).toMatchSnapshot();
@@ -312,15 +312,15 @@ describe('Decorator', () => {
 
       describe('when method has @ApiOperation not attached', () => {
         it('should not attach the class exception decorator', () => {
-          @TemplatedApiException(CustomBadRequestException)
-          @TemplatedApiException([CustomNotFoundException, NotFoundException])
-          class GroupTest {
+          @TemplatedApiException(() => CustomBadRequestException)
+          @TemplatedApiException(() => [CustomNotFoundException, NotFoundException])
+          class GroupTest2 {
             test() {
               return;
             }
           }
 
-          const descriptor = Object.getOwnPropertyDescriptor(GroupTest.prototype, 'test');
+          const descriptor = Object.getOwnPropertyDescriptor(GroupTest2.prototype, 'test');
           const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
           expect(meta).toBeUndefined();
@@ -330,18 +330,18 @@ describe('Decorator', () => {
 
     describe('when method has the same exception attached multiple times, but with different descriptions', () => {
       it('should group the exceptions properly', () => {
-        @TemplatedApiException(CustomBadRequestException, { description: 'One more at class level' })
-        class GroupTest1 {
-          @TemplatedApiException(CustomBadRequestException)
-          @TemplatedApiException(CustomBadRequestException, { description: 'Test' })
-          @TemplatedApiException(CustomBadRequestException, { description: 'One more just for testing' })
+        @TemplatedApiException(() => CustomBadRequestException, { description: 'One more at class level' })
+        class GroupTest3 {
+          @TemplatedApiException(() => CustomBadRequestException)
+          @TemplatedApiException(() => CustomBadRequestException, { description: 'Test' })
+          @TemplatedApiException(() => CustomBadRequestException, { description: 'One more just for testing' })
           @ApiOperation({})
           test() {
             return;
           }
         }
 
-        const descriptor = Object.getOwnPropertyDescriptor(GroupTest1.prototype, 'test');
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest3.prototype, 'test');
         const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
         expect(meta).toMatchSnapshot();
@@ -350,15 +350,15 @@ describe('Decorator', () => {
 
     describe('when method has the same exception attached multiple times, but with different instantiated exceptions', () => {
       it('should group the exceptions properly', () => {
-        class GroupTest2 {
-          @TemplatedApiException([new BadRequestException('test'), new BadRequestException('test 2')])
+        class GroupTest4 {
+          @TemplatedApiException(() => [new BadRequestException('test'), new BadRequestException('test 2')])
           @ApiOperation({})
           test() {
             return;
           }
         }
 
-        const descriptor = Object.getOwnPropertyDescriptor(GroupTest2.prototype, 'test');
+        const descriptor = Object.getOwnPropertyDescriptor(GroupTest4.prototype, 'test');
         const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
         expect(meta).toMatchSnapshot();

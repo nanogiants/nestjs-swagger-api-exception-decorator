@@ -134,3 +134,82 @@ Object {
   "type": undefined,
 }
 `;
+
+exports[`Decorator @TemplatedApiException given exception array should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {},
+        },
+        "NotFoundException": Object {
+          "description": "Not Found",
+          "value": Object {},
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {},
+        "required": Array [],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @TemplatedApiException given single exception should not print a warning anymore because of duplicate class name 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {},
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {},
+        "required": Array [],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
+
+exports[`Decorator @TemplatedApiException given single exception should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "BadRequestException": Object {
+          "description": "Bad Request",
+          "value": Object {},
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {},
+        "required": Array [],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 400,
+  "type": undefined,
+}
+`;
