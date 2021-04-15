@@ -14,7 +14,7 @@ There are two ways of defining a template:
 When using the `@ApiException` decorator you can additionally pass an object. In previous sections you may have seen, that you can specify a `description`. Additionally you can pass a `template` which then will be used to display the example response in SwaggerUI. For example:
 
 ```typescript
-@ApiException(BadRequestException, {
+@ApiException(() => BadRequestException, {
   template: {
     statusCode: '$status',
     timestamp: '01.01.1970T15:30:11',
@@ -55,8 +55,7 @@ import { PasswordInvalidException } from './bad-request-exceptions';
 
 export class UserController {
   @ApiOperation({ summary: 'Changes the users password' })
-  @TemplatedApiException(PasswordInvalidException)
-  @TemplatedApiException(UserNotAuthorizedException)
+  @TemplatedApiException(() => [PasswordInvalidException, UserNotAuthorizedException])
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
@@ -72,7 +71,4 @@ The `buildTemplatedApiExceptionDecorator` function takes two arguments:
 - `options`
   - `contentType`: Specify content type. Default: `application/json`
 
-#### Available placeholders
-
-- `$status`: replaces the placeholder by the status code specified in the exception
-- `$description`: replaces the placeholder by the message/description specified in the exception
+For available placeholders please see our [API description](/api#template).

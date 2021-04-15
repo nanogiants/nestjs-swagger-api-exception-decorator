@@ -18,8 +18,8 @@ import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator
 
 export class UserController {
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException(BadRequestException, { description: 'The password was invalid' })
-  @ApiException(UnauthorizedException, { description: 'The user is not authorized' })
+  @ApiException(() => BadRequestException, { description: 'The password was invalid' })
+  @ApiException(() => UnauthorizedException, { description: 'The user is not authorized' })
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
@@ -35,17 +35,17 @@ You can also decorate classes with the `@ApiException` decorator. For example:
 import { BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 
-@ApiException(UnauthorizedException, { description: 'The user is not authorized' })
+@ApiException(() => UnauthorizedException, { description: 'The user is not authorized' })
 export class UserController {
   @ApiOperation({ summary: 'Retrieves user information' })
-  @ApiException(NotFoundException, { description: 'The user was not found' })
+  @ApiException(() => NotFoundException, { description: 'The user was not found' })
   @Get('/')
   async getUserInfo(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
   }
 
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException(BadRequestException, { description: 'The password was invalid' })
+  @ApiException(() => BadRequestException, { description: 'The password was invalid' })
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
@@ -75,8 +75,8 @@ import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator
 
 export class UserController {
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException(BadRequestException, { description: 'The password was invalid' })
-  @ApiException(BadRequestException, { description: 'The new password does not match the requirements' })
+  @ApiException(() => BadRequestException, { description: 'The password was invalid' })
+  @ApiException(() => BadRequestException, { description: 'The new password does not match the requirements' })
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);

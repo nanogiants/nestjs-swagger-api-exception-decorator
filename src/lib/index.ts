@@ -1,8 +1,13 @@
 import { HttpException } from '@nestjs/common';
 
 import { ApiException } from './decorators/api-exception.decorator';
-import { ExceptionArguments } from './interfaces/exceptions.interface';
+import {
+  ExceptionArguments,
+  ExceptionOrExceptionArray,
+  ExceptionOrExceptionArrayFunc,
+} from './interfaces/api-exception.interface';
 import { Options } from './interfaces/options.interface';
+import { areExceptionsPassedWithoutArrowFunction } from './utils/exception.util';
 
 /**
  * Build your own custom decorator. This enables you to re-use the same template again without the need to specify it
@@ -13,11 +18,13 @@ import { Options } from './interfaces/options.interface';
  */
 export const buildTemplatedApiExceptionDecorator = (template: unknown, globalOptions?: Omit<Options, 'template'>) => {
   return <T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options) => {
-    return ApiException(exceptions, {
-      ...globalOptions,
-      template,
-      ...options,
-    });
+    const mergedOptions = { ...globalOptions, template, ...options };
+
+    if (areExceptionsPassedWithoutArrowFunction(exceptions)) {
+      return ApiException(exceptions as ExceptionOrExceptionArray<T>, mergedOptions);
+    } else {
+      return ApiException(exceptions as ExceptionOrExceptionArrayFunc<T>, mergedOptions);
+    }
   };
 };
 

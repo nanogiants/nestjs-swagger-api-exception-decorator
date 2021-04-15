@@ -3,6 +3,7 @@ import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.int
 
 import { Options } from '../interfaces/options.interface';
 import { merge } from './example.util';
+import { buildSchema } from './schema.util';
 
 const PlaceholderExceptionMapping = {
   $status: 'getStatus',
@@ -22,21 +23,24 @@ const resolvePlaceholders = (template: any, exception: HttpException) => {
   }
 };
 
-const buildExampleResponse = (template: any, exception: HttpException) => {
-  if (template && typeof template === 'object') {
-    const copy = JSON.parse(JSON.stringify(template));
-    resolvePlaceholders(copy, exception);
-    return copy;
-  }
-
-  return null;
+export const resolveTemplatePlaceholders = (template: any, exception: HttpException) => {
+  const copy = JSON.parse(JSON.stringify(template));
+  resolvePlaceholders(copy, exception);
+  return copy;
 };
 
-export const buildExampleContent = (exceptions: HttpException[], options: Options) => {
-  const content = { [options.contentType]: { examples: {} } };
-
+export const buildContentObjects = (exceptions: HttpException[], options: Options) => {
+  const contents: Record<number, ContentObject> = {};
   for (const exception of exceptions) {
-    const exampleResponse = buildExampleResponse(options.template, exception);
+    const statusCode = exception.getStatus();
+    if (!contents[statusCode]) {
+      contents[statusCode] = { [options.contentType]: { examples: {} } };
+      contents[statusCode][options.contentType].schema = buildSchema(options, exception);
+    }
+
+    const content = contents[statusCode];
+
+    const exampleResponse = resolveTemplatePlaceholders(options.template, exception);
 
     merge(content[options.contentType].examples, {
       [exception.constructor.name]: {
@@ -46,7 +50,7 @@ export const buildExampleContent = (exceptions: HttpException[], options: Option
     });
   }
 
-  return content;
+  return contents;
 };
 
 export const mergeExampleContent = (content: ContentObject, newContent: ContentObject) => {
