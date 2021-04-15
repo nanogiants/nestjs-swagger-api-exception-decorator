@@ -11,7 +11,7 @@ export class AppController {
 
   @Post()
   @ApiOperation({ summary: 'This is an example with custom named exceptions' })
-  @TemplatedApiException([MissingPropertyException, PayloadMissingException])
+  @TemplatedApiException(() => [MissingPropertyException, PayloadMissingException])
   createResource() {
     return 'resource has been created';
   }
