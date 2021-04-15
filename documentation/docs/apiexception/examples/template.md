@@ -6,12 +6,12 @@ When using the [templated decorator](/gettingstarted/usage/templated#use-the-bui
 
 ```typescript
 @Controller()
-@ApiException(UnauthorizedException, { description: 'User is not authorized' })
+@ApiException(() => UnauthorizedException, { description: 'User is not authorized' })
 export class AppController {
 
   @Post()
   @ApiOperation({ summary: 'This is an example with custom named exceptions' })
-  @TemplatedApiException([MissingPropertyException, PayloadMissingException])
+  @TemplatedApiException(() => [MissingPropertyException, PayloadMissingException])
   createResource() {
     return 'resource has been created';
   }

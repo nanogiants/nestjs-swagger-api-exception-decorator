@@ -60,8 +60,7 @@ import { PasswordInvalidException } from './bad-request-exceptions';
 
 export class UserController {
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException(PasswordInvalidException)
-  @ApiException(UserNotAuthorizedException)
+  @ApiException(() => [PasswordInvalidException, UserNotAuthorizedException])
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
@@ -76,7 +75,7 @@ The decorator then takes the exception descriptions and passes them to Swagger. 
 If you pass an object containing the description, the description will be overwritten by the description you defined.
 
 ```typescript
-@ApiException(PasswordInvalidException, { description: 'Any other description' })
+@ApiException(() => PasswordInvalidException, { description: 'Any other description' })
 ```
 
 ### Pass exceptions as an array
@@ -102,16 +101,11 @@ export class PasswordNotMatchingRequirementsException extends BadRequestExceptio
 ```
 
 ```typescript
-@ApiException([PasswordInvalidException, PasswordNotMatchingRequirementsException])
+@ApiException(() => [PasswordInvalidException, PasswordNotMatchingRequirementsException])
 ```
 
 :::tip
-This allows to pass multiple exceptions with different status codes. Always group exceptions in one `@ApiException` decorator with the same status code! The decorator will warn you, if you specified exceptions with different status codes in one call / array:
-
-```
-@ApiException(): Please inspect exceptions in decorator. Not all status codes are equal! (Class-name: UserController, Method: changeUserPassword)
-```
-
+This allows to pass multiple exceptions with different status codes. The decorator determines which HTTP status code is specified in the exceptions and attaches the exceptions automatically to the correct example values.
 :::
 
 ## At class level
