@@ -69,7 +69,7 @@ The type property can be used to specify already defined Swagger annotated class
 *Example*:
 `@ApiException(() => BadRequestException, { type: () => AnySwaggerAnnotatedClass })`
 
-See our [demo project](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/blob/f801c034188a9d65fa5ee6ad5965c437e225fb03/demo/src/app.controller.ts#L67) for a more detailed example.
+See our [demo project](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/blob/develop/demo/src/app.controller.ts#L70) for a more detailed example.
 
 ### `isArray`
 
