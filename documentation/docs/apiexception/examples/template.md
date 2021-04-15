@@ -6,7 +6,7 @@ When using the [templated decorator](/gettingstarted/usage/templated#use-the-bui
 
 ```typescript
 @Controller()
-@ApiException(UnauthorizedException, { description: 'User is not authorized' })
+@ApiException(() => UnauthorizedException, { description: 'User is not authorized' })
 export class AppController {
 
   @Post()

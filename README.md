@@ -19,10 +19,10 @@ $ npm install @nanogiants/nestjs-swagger-api-exception-decorator
 ```typescript
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 
-@ApiException(UnauthorizedException)
+@ApiException(() => UnauthorizedException)
 export class Controller {
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException([PasswordsDidNotMatchException, OldAndNewPasswordMatchException, CredentialsNotValidException])
+  @ApiException(() => [PasswordsDidNotMatchException, OldAndNewPasswordMatchException, CredentialsNotValidException])
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
