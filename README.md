@@ -22,8 +22,7 @@ import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator
 @ApiException(UnauthorizedException)
 export class Controller {
   @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException([PasswordsDidNotMatchException, OldAndNewPasswordMatchException])
-  @ApiException(CredentialsNotValidException)
+  @ApiException([PasswordsDidNotMatchException, OldAndNewPasswordMatchException, CredentialsNotValidException])
   @Patch('/password')
   async changeUserPassword(@Res() res: Response): Promise<void> {
     return res.sendStatus(HttpStatus.OK);
