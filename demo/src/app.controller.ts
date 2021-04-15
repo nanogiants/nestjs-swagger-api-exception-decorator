@@ -29,14 +29,16 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
 });
 
 @Controller()
-@ApiException(UnauthorizedException, { description: 'User is not authorized' })
+@ApiException(() => UnauthorizedException, {
+  description: 'User is not authorized',
+})
 @ApiExtraModels(SwaggerAnnotations)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Post()
   @ApiOperation({ summary: 'This is an example with custom named exceptions' })
-  @ApiException([MissingPropertyException, PayloadMissingException])
+  @ApiException(() => [MissingPropertyException, PayloadMissingException])
   createResource() {
     return 'resource has been created';
   }
@@ -45,10 +47,10 @@ export class AppController {
   @ApiOperation({
     summary: 'This is an example with nestjs default exceptions',
   })
-  @ApiException(NotFoundException, {
+  @ApiException(() => NotFoundException, {
     description: 'Resource could not be found',
   })
-  @ApiException(NotFoundException, {
+  @ApiException(() => NotFoundException, {
     description: 'Something else could not be found',
   })
   updateResource() {
@@ -57,14 +59,14 @@ export class AppController {
 
   @Post('/log')
   @ApiOperation({ summary: 'Log something' })
-  @ApiException(BadRequestException, { type: () => SwaggerAnnotations })
+  @ApiException(() => BadRequestException, { type: () => SwaggerAnnotations })
   logSomething() {
     return 'something logged';
   }
 
   @Post('/log/array')
   @ApiOperation({ summary: 'Log something' })
-  @ApiException(BadRequestException, {
+  @ApiException(() => BadRequestException, {
     type: () => SwaggerAnnotations,
     isArray: true,
   })
@@ -74,7 +76,7 @@ export class AppController {
 
   @Post('/schema')
   @ApiOperation({ summary: 'Schema testing' })
-  @ApiException(BadRequestException, {
+  @ApiException(() => BadRequestException, {
     schema: { $ref: getSchemaPath('SwaggerAnnotations') },
   })
   schemaTest() {
@@ -86,7 +88,10 @@ export class AppController {
     summary:
       'This is an example with custom exceptions and predefined template',
   })
-  @TemplatedApiException([MissingPropertyException, PayloadMissingException])
+  @TemplatedApiException(() => [
+    MissingPropertyException,
+    PayloadMissingException,
+  ])
   putResource() {
     return 'resource has been updated';
   }
@@ -95,7 +100,7 @@ export class AppController {
   @ApiOperation({
     summary: 'This is an example with an error',
   })
-  @ApiException(BadRequestException, {
+  @ApiException(() => BadRequestException, {
     description: 'Required attributes were missing',
   })
   throwException() {
