@@ -14,6 +14,7 @@ import {
 
 import { AppService } from './app.service';
 import {
+  CustomNotFoundException,
   MissingPropertyException,
   PayloadMissingException,
 } from './exceptions';
@@ -47,7 +48,7 @@ export class AppController {
   @ApiOperation({
     summary: 'This is an example with nestjs default exceptions',
   })
-  @ApiException(() => NotFoundException, {
+  @ApiException(() => [NotFoundException, BadRequestException], {
     description: 'Resource could not be found',
   })
   @ApiException(() => NotFoundException, {
@@ -91,6 +92,7 @@ export class AppController {
   @TemplatedApiException(() => [
     MissingPropertyException,
     PayloadMissingException,
+    CustomNotFoundException,
   ])
   putResource() {
     return 'resource has been updated';
