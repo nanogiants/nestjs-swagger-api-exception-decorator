@@ -644,6 +644,109 @@ Object {
 }
 `;
 
+exports[`Decorator @TemplatedApiExceptionWithRequiredProperties - with some required properties should properly define the required properties 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomBadRequestException": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "description": "Bad Request",
+              "reasons": Array [],
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "reasons": Object {
+              "example": Array [],
+              "type": "object",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "description",
+            "reasons",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+  "404": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "CustomNotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "reasons": Array [],
+              "statusCode": 404,
+            },
+          },
+          "CustomNotFoundExceptionWithArrayMessage": Object {
+            "description": "hallo",
+            "value": Object {
+              "description": "hallo",
+              "reasons": Array [],
+              "statusCode": 404,
+            },
+          },
+          "NotFoundException": Object {
+            "description": "Not Found",
+            "value": Object {
+              "description": "Not Found",
+              "reasons": Array [],
+              "statusCode": 404,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "hallo",
+              "type": "string",
+            },
+            "reasons": Object {
+              "example": Array [],
+              "type": "object",
+            },
+            "statusCode": Object {
+              "example": 404,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "description",
+            "reasons",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
 exports[`Decorator usage of multiple @ApiException given multiple @ApiException decorators when method has @ApiOperation attached should be grouped correctly 1`] = `
 Object {
   "400": Object {
