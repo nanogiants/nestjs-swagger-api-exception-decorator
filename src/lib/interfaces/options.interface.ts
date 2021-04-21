@@ -1,7 +1,10 @@
 import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-export interface Options {
-  template?: any;
+export type Template = Record<string, unknown>;
+
+export interface Options<T = Template> {
+  template?: T;
+  requiredProperties?: (keyof T)[];
   contentType?: string;
   description?: string;
   schema?: SchemaObject | ReferenceObject;

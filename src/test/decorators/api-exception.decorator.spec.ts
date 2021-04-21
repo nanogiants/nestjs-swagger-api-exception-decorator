@@ -12,6 +12,17 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   description: '$description',
 });
 
+const TemplatedApiExceptionWithRequiredProperties = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    description: '$description',
+    reasons: [],
+  },
+  {
+    requiredProperties: ['description', 'reasons'],
+  },
+);
+
 jest.mock('@nestjs/swagger', () => {
   const {
     ApiOperation: ActualApiOperation,
@@ -276,6 +287,25 @@ describe('Decorator', () => {
 
         expect(meta).toMatchSnapshot();
       });
+    });
+  });
+
+  describe('@TemplatedApiExceptionWithRequiredProperties - with some required properties', () => {
+    it('should properly define the required properties', () => {
+      @TemplatedApiExceptionWithRequiredProperties(() => CustomBadRequestException)
+      @TemplatedApiExceptionWithRequiredProperties(() => [CustomNotFoundException, NotFoundException])
+      class RequiredProperties {
+        @ApiOperation({ description: 'test' })
+        @TemplatedApiExceptionWithRequiredProperties(() => new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+        test() {
+          return;
+        }
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(RequiredProperties.prototype, 'test');
+      const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+      expect(meta).toMatchSnapshot();
     });
   });
 
