@@ -30,7 +30,7 @@ const buildSwaggerTypeRef = (options: Pick<Options, 'type' | 'isArray'>): Schema
 };
 
 export const buildSchema = (options: MergedOptions, exception: HttpException): SchemaObject => {
-  const resolvedTemplate = resolveTemplatePlaceholders(options.template, exception);
+  const resolvedTemplate = resolveTemplatePlaceholders(options, exception);
 
   const properties: Record<string, SchemaOrReference> = {};
   for (const [key, value] of Object.entries(resolvedTemplate)) {

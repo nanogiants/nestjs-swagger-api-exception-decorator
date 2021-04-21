@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Controller,
   NotFoundException,
   Patch,
@@ -19,7 +20,10 @@ import {
   PayloadMissingException,
 } from './exceptions';
 import { ApiExtraModels, ApiOperation, getSchemaPath } from '@nestjs/swagger';
-import { SwaggerAnnotations } from './swagger-annotations';
+import {
+  BaseExceptionTemplate,
+  SwaggerAnnotations,
+} from './swagger-annotations';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
@@ -33,7 +37,7 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator({
 @ApiException(() => UnauthorizedException, {
   description: 'User is not authorized',
 })
-@ApiExtraModels(SwaggerAnnotations)
+@ApiExtraModels(SwaggerAnnotations, BaseExceptionTemplate)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -60,7 +64,14 @@ export class AppController {
 
   @Post('/log')
   @ApiOperation({ summary: 'Log something' })
-  @ApiException(() => BadRequestException, { type: () => SwaggerAnnotations })
+  @ApiException(() => BadRequestException, {
+    type: () => BaseExceptionTemplate,
+  })
+  @ApiException(() => NotFoundException, { type: () => BaseExceptionTemplate })
+  @ApiException(() => UnauthorizedException, {
+    type: () => BaseExceptionTemplate,
+  })
+  @ApiException(() => ConflictException, { type: () => BaseExceptionTemplate })
   logSomething() {
     return 'something logged';
   }

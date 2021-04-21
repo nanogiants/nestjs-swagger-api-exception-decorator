@@ -1,16 +1,17 @@
 import { HttpException } from '@nestjs/common';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { Options } from '../interfaces/options.interface';
+import { MergedOptions } from '../interfaces/options.interface';
 import { merge } from './example.util';
 import { buildSchema } from './schema.util';
+import { buildMessageByType } from './type.util';
 
 const PlaceholderExceptionMapping = {
   $status: 'getStatus',
   $description: 'message',
 };
 
-const resolvePlaceholders = (template: any, exception: HttpException) => {
+const resolvePlaceholders = (template: any, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
     const placeholderProperty = PlaceholderExceptionMapping[template[key]];
     if (placeholderProperty) {
@@ -21,15 +22,17 @@ const resolvePlaceholders = (template: any, exception: HttpException) => {
       }
     }
   }
+
+  buildMessageByType(template, options);
 };
 
-export const resolveTemplatePlaceholders = (template: any, exception: HttpException) => {
-  const copy = JSON.parse(JSON.stringify(template));
-  resolvePlaceholders(copy, exception);
+export const resolveTemplatePlaceholders = (options: MergedOptions, exception: HttpException) => {
+  const copy = JSON.parse(JSON.stringify(options.template));
+  resolvePlaceholders(copy, exception, options);
   return copy;
 };
 
-export const buildContentObjects = (exceptions: HttpException[], options: Options) => {
+export const buildContentObjects = (exceptions: HttpException[], options: MergedOptions) => {
   const contents: Record<number, ContentObject> = {};
   for (const exception of exceptions) {
     const statusCode = exception.getStatus();
@@ -40,7 +43,7 @@ export const buildContentObjects = (exceptions: HttpException[], options: Option
 
     const content = contents[statusCode];
 
-    const exampleResponse = resolveTemplatePlaceholders(options.template, exception);
+    const exampleResponse = resolveTemplatePlaceholders(options, exception);
 
     merge(content[options.contentType].examples, {
       [exception.constructor.name]: {
