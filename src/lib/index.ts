@@ -6,7 +6,7 @@ import {
   ExceptionOrExceptionArray,
   ExceptionOrExceptionArrayFunc,
 } from './interfaces/api-exception.interface';
-import { Options } from './interfaces/options.interface';
+import { Options, Template } from './interfaces/options.interface';
 import { areExceptionsPassedWithoutArrowFunction } from './utils/exception.util';
 
 /**
@@ -16,14 +16,17 @@ import { areExceptionsPassedWithoutArrowFunction } from './utils/exception.util'
  * @param template Any object describing the template which should be shown as example value
  * @param globalOptions Specify the content type
  */
-export const buildTemplatedApiExceptionDecorator = (template: unknown, globalOptions?: Omit<Options, 'template'>) => {
-  return <T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options) => {
-    const mergedOptions = { ...globalOptions, template, ...options };
+export const buildTemplatedApiExceptionDecorator = <T = Template>(
+  template: T,
+  globalOptions?: Omit<Options<T>, 'template'>,
+) => {
+  return <Exception extends HttpException>(exceptions: ExceptionArguments<Exception>, options?: Options<T>) => {
+    const mergedOptions = ({ ...globalOptions, template, ...options } as unknown) as Options<Template>;
 
     if (areExceptionsPassedWithoutArrowFunction(exceptions)) {
-      return ApiException(exceptions as ExceptionOrExceptionArray<T>, mergedOptions);
+      return ApiException(exceptions as ExceptionOrExceptionArray<Exception>, mergedOptions);
     } else {
-      return ApiException(exceptions as ExceptionOrExceptionArrayFunc<T>, mergedOptions);
+      return ApiException(exceptions as ExceptionOrExceptionArrayFunc<Exception>, mergedOptions);
     }
   };
 };

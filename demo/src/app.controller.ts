@@ -25,13 +25,16 @@ import {
   SwaggerAnnotations,
 } from './swagger-annotations';
 
-const TemplatedApiException = buildTemplatedApiExceptionDecorator({
-  statusCode: '$status',
-  timestamp: '01.01.1970T15:30:11',
-  path: 'string',
-  message: '$description',
-  reasons: 'string',
-});
+const TemplatedApiException = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    timestamp: '01.01.1970T15:30:11',
+    path: 'string',
+    message: '$description',
+    reasons: 'string',
+  },
+  { requiredProperties: ['statusCode', 'message', 'timestamp'] },
+);
 
 @Controller()
 @ApiException(() => UnauthorizedException, {
