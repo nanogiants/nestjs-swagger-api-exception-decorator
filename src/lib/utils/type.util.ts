@@ -1,8 +1,8 @@
 import { getTypeIsArrayTuple } from '@nestjs/swagger/dist/decorators/helpers';
 
-import { MergedOptions } from '../interfaces/options.interface';
+import { MergedOptions, Template } from '../interfaces/options.interface';
 
-export const buildMessageByType = (template: any, options: MergedOptions) => {
+export const buildMessageByType = (template: Template, options: MergedOptions) => {
   if (!options.userDefinedTemplate && options.type) {
     if (typeof options.type() === 'function') {
       const [type, isArray] = getTypeIsArrayTuple(options.type, !!options.isArray);

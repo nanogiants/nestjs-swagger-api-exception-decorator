@@ -1,7 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { MergedOptions } from '../interfaces/options.interface';
+import { MergedOptions, Template } from '../interfaces/options.interface';
 import { merge } from './example.util';
 import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
@@ -11,14 +11,16 @@ const PlaceholderExceptionMapping = {
   $description: 'message',
 };
 
-const resolvePlaceholders = (template: any, exception: HttpException, options: MergedOptions) => {
+const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
-    const placeholderProperty = PlaceholderExceptionMapping[template[key]];
-    if (placeholderProperty) {
-      if (typeof exception[placeholderProperty] === 'function') {
-        template[key] = exception[placeholderProperty]();
-      } else {
-        template[key] = exception[placeholderProperty];
+    if (typeof template[key] === 'string') {
+      const placeholderProperty = PlaceholderExceptionMapping[template[key] as string];
+      if (placeholderProperty) {
+        if (typeof exception[placeholderProperty] === 'function') {
+          template[key] = exception[placeholderProperty]();
+        } else {
+          template[key] = exception[placeholderProperty];
+        }
       }
     }
   }
