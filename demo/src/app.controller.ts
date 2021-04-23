@@ -68,13 +68,13 @@ export class AppController {
   @Post('/log')
   @ApiOperation({ summary: 'Log something' })
   @ApiException(() => BadRequestException, {
-    type: () => BaseExceptionTemplate,
+    type: () => SwaggerAnnotations,
   })
-  @ApiException(() => NotFoundException, { type: () => BaseExceptionTemplate })
+  @ApiException(() => NotFoundException, { type: () => SwaggerAnnotations })
   @ApiException(() => UnauthorizedException, {
-    type: () => BaseExceptionTemplate,
+    type: () => SwaggerAnnotations,
   })
-  @ApiException(() => ConflictException, { type: () => BaseExceptionTemplate })
+  @ApiException(() => ConflictException, { type: () => SwaggerAnnotations })
   logSomething() {
     return 'something logged';
   }

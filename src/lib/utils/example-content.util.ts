@@ -22,14 +22,16 @@ const resolvePlaceholders = (template: Template, exception: HttpException, optio
           template[key] = exception[placeholderProperty];
         }
       }
+    } else if (typeof template[key] === 'object' && template[key] !== null) {
+      // Deep traverse all nested keys if object
+      resolvePlaceholders(template[key] as Record<string, unknown>, exception, options);
     }
   }
-
-  buildMessageByType(template, options);
 };
 
 export const resolveTemplatePlaceholders = (options: MergedOptions, exception: HttpException) => {
   const copy = JSON.parse(JSON.stringify(options.template));
+  buildMessageByType(copy, options);
   resolvePlaceholders(copy, exception, options);
   return copy;
 };

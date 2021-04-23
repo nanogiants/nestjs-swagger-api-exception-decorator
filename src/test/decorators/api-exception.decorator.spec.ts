@@ -17,6 +17,7 @@ const TemplatedApiExceptionWithRequiredProperties = buildTemplatedApiExceptionDe
     statusCode: '$status',
     description: '$description',
     reasons: [],
+    fixedValue: 123,
   },
   {
     requiredProperties: ['description', 'reasons'],

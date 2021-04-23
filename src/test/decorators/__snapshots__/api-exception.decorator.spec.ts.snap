@@ -355,7 +355,23 @@ Object {
           "description": "Bad Request",
           "value": Object {
             "error": "Bad Request",
-            "message": "Bad Request",
+            "message": Array [
+              Object {
+                "property1": "Number",
+                "property2": Object {
+                  "property3": "Number",
+                  "subsub": Array [
+                    Object {
+                      "bool": "Boolean",
+                      "desc": "Bad Request",
+                      "exampleEnum": "LOG",
+                    },
+                  ],
+                },
+                "property4": "Boolean",
+                "statusCode": 400,
+              },
+            ],
             "statusCode": 400,
           },
         },
@@ -403,7 +419,21 @@ Object {
           "description": "Bad Request",
           "value": Object {
             "error": "Bad Request",
-            "message": "Bad Request",
+            "message": Object {
+              "property1": "Number",
+              "property2": Object {
+                "property3": "Number",
+                "subsub": Array [
+                  Object {
+                    "bool": "Boolean",
+                    "desc": "Bad Request",
+                    "exampleEnum": "LOG",
+                  },
+                ],
+              },
+              "property4": "Boolean",
+              "statusCode": 400,
+            },
             "statusCode": 400,
           },
         },
@@ -654,6 +684,7 @@ Object {
             "description": "Bad Request",
             "value": Object {
               "description": "Bad Request",
+              "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 400,
             },
@@ -665,6 +696,10 @@ Object {
             "description": Object {
               "example": "Bad Request",
               "type": "string",
+            },
+            "fixedValue": Object {
+              "example": 123,
+              "type": "number",
             },
             "reasons": Object {
               "example": Array [],
@@ -695,6 +730,7 @@ Object {
             "description": "Not Found",
             "value": Object {
               "description": "Not Found",
+              "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
             },
@@ -703,6 +739,7 @@ Object {
             "description": "hallo",
             "value": Object {
               "description": "hallo",
+              "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
             },
@@ -711,6 +748,7 @@ Object {
             "description": "Not Found",
             "value": Object {
               "description": "Not Found",
+              "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
             },
@@ -722,6 +760,10 @@ Object {
             "description": Object {
               "example": "hallo",
               "type": "string",
+            },
+            "fixedValue": Object {
+              "example": 123,
+              "type": "number",
             },
             "reasons": Object {
               "example": Array [],
