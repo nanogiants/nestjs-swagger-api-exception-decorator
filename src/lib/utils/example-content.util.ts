@@ -7,24 +7,55 @@ import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
 
 const PlaceholderExceptionMapping = {
-  $status: 'getStatus',
-  $description: 'message',
+  status: 'getStatus',
+  description: 'message',
 };
+
+const PLACEHOLDER_IDENTIFIER = '$';
+
+const isString = (value: unknown): value is string => typeof value === 'string';
 
 const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
-    if (typeof template[key] === 'string') {
-      const placeholderProperty = PlaceholderExceptionMapping[template[key] as string];
+    let templateValue = template[key];
+
+    const setTemplateValue = (value: unknown) => {
+      template[key] = value;
+      templateValue = value;
+    };
+
+    const deleteTemplateValue = () => {
+      delete template[key];
+      templateValue = undefined;
+    };
+
+    const isPlaceholder = () => isString(templateValue) && templateValue.startsWith(PLACEHOLDER_IDENTIFIER);
+    if (isPlaceholder()) {
+      const placeholderValue = (templateValue as string).substring(1);
+
+      const placeholderProperty = PlaceholderExceptionMapping[placeholderValue];
       if (placeholderProperty) {
         if (typeof exception[placeholderProperty] === 'function') {
-          template[key] = exception[placeholderProperty]();
+          setTemplateValue(exception[placeholderProperty]());
         } else {
-          template[key] = exception[placeholderProperty];
+          setTemplateValue(exception[placeholderProperty]);
         }
       }
-    } else if (typeof template[key] === 'object' && template[key] !== null) {
-      // Deep traverse all nested keys if object
-      resolvePlaceholders(template[key] as Record<string, unknown>, exception, options);
+
+      if (options.placeholders?.[placeholderValue]) {
+        const { exceptionMatcher, resolver } = options.placeholders[placeholderValue];
+        if (exception instanceof exceptionMatcher()) {
+          setTemplateValue(resolver(exception));
+        } else {
+          deleteTemplateValue();
+        }
+      }
+
+      if (isPlaceholder()) {
+        deleteTemplateValue();
+      }
+    } else if (templateValue !== null && typeof templateValue === 'object') {
+      resolvePlaceholders(templateValue as Record<string, unknown>, exception, options);
     }
   }
 };

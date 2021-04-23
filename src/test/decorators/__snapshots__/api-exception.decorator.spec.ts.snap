@@ -674,6 +674,88 @@ Object {
 }
 `;
 
+exports[`Decorator @TemplatedApiExceptionWithCustomPlaceholder - with some custom placeholders should properly use the custom placeholder resolvers 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "BadRequestException": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "description": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "description",
+            "statusCode",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+  "401": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "UserUnauthorizedException": Object {
+            "description": "User is not authorized",
+            "value": Object {
+              "clientCode": 1000,
+              "description": "User is not authorized",
+              "statusCode": 401,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "clientCode": Object {
+              "example": 1000,
+              "type": "number",
+            },
+            "description": Object {
+              "example": "User is not authorized",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 401,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "description",
+            "statusCode",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
 exports[`Decorator @TemplatedApiExceptionWithRequiredProperties - with some required properties should properly define the required properties 1`] = `
 Object {
   "400": Object {

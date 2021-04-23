@@ -4,7 +4,8 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
-import { ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { buildPlaceholder, ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { BaseException, UserUnauthorizedException } from './exceptions/BaseException';
 import { SwaggerAnnotations } from './type/swagger-annotation';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
@@ -21,6 +22,24 @@ const TemplatedApiExceptionWithRequiredProperties = buildTemplatedApiExceptionDe
   },
   {
     requiredProperties: ['description', 'reasons'],
+  },
+);
+
+const TemplatedApiExceptionWithCustomPlaceholder = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    description: '$description',
+    clientCode: '$clientCode',
+    missingPlaceholder: '$not_existing',
+  },
+  {
+    requiredProperties: ['description', 'statusCode'],
+    placeholders: {
+      clientCode: buildPlaceholder(
+        () => BaseException,
+        exception => exception.getClientCode(),
+      ),
+    },
   },
 );
 
@@ -304,6 +323,23 @@ describe('Decorator', () => {
       }
 
       const descriptor = Object.getOwnPropertyDescriptor(RequiredProperties.prototype, 'test');
+      const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+      expect(meta).toMatchSnapshot();
+    });
+  });
+
+  describe('@TemplatedApiExceptionWithCustomPlaceholder - with some custom placeholders', () => {
+    it('should properly use the custom placeholder resolvers', () => {
+      class CustomPlaceholders {
+        @ApiOperation({ description: 'test' })
+        @TemplatedApiExceptionWithCustomPlaceholder(() => [UserUnauthorizedException, BadRequestException])
+        test() {
+          return;
+        }
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(CustomPlaceholders.prototype, 'test');
       const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
       expect(meta).toMatchSnapshot();
