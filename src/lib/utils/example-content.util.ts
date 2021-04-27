@@ -7,8 +7,9 @@ import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
 
 const PlaceholderExceptionMapping = {
-  status: 'getStatus',
+  status: 'statusCode',
   description: 'message',
+  error: 'error',
 };
 
 const PLACEHOLDER_IDENTIFIER = '$';
@@ -35,11 +36,15 @@ const resolvePlaceholders = (template: Template, exception: HttpException, optio
 
       const placeholderProperty = PlaceholderExceptionMapping[placeholderValue];
       if (placeholderProperty) {
-        if (typeof exception[placeholderProperty] === 'function') {
-          setTemplateValue(exception[placeholderProperty]());
-        } else {
-          setTemplateValue(exception[placeholderProperty]);
+        const exceptionResponse = exception.getResponse();
+        let resolvedValue = exceptionResponse[placeholderProperty];
+
+        if (placeholderProperty === 'error' && !options.userDefinedTemplate && typeof resolvedValue === 'undefined') {
+          // If placeholder is error it could be that error is undefined. So we need to return the description (message) here
+          resolvedValue = exceptionResponse['message'];
         }
+
+        setTemplateValue(resolvedValue);
       }
 
       if (options.placeholders?.[placeholderValue]) {

@@ -137,4 +137,15 @@ export class AppController {
   throwException() {
     throw new BadRequestException();
   }
+
+  // @Put('/exception')
+  // @ApiOperation({
+  //   summary: 'This is an example with an error',
+  // })
+  // @ApiException(() => BadRequestException, {
+  //   template: () => SwaggerAnnotations,
+  // })
+  // throwExceptionWithAnnotatedTemplate() {
+  //   throw new BadRequestException();
+  // }
 }

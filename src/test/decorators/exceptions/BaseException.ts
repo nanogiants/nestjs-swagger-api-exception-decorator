@@ -12,6 +12,7 @@ export class BaseException extends HttpException {
 
 export class UserUnauthorizedException extends BaseException {
   constructor() {
-    super('User is not authorized', HttpStatus.UNAUTHORIZED, 1000);
+    const body = BaseException.createBody('User is not authorized', 'Unauthorized', HttpStatus.UNAUTHORIZED);
+    super(body, HttpStatus.UNAUTHORIZED, 1000);
   }
 }

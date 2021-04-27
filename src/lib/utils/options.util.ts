@@ -5,7 +5,7 @@ const DefaultOptions: Options = {
   template: {
     statusCode: '$status',
     message: '$description',
-    error: '$description',
+    error: '$error',
   },
 };
 
