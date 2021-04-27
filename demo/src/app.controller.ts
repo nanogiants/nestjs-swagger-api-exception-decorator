@@ -11,6 +11,7 @@ import {
 import {
   ApiException,
   buildTemplatedApiExceptionDecorator,
+  buildPlaceholder,
 } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 
 import { AppService } from './app.service';
@@ -24,6 +25,10 @@ import {
   BaseExceptionTemplate,
   SwaggerAnnotations,
 } from './swagger-annotations';
+import {
+  BaseException,
+  UserUnauthorizedException,
+} from './exceptions/placeholders/exceptions';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator(
   {
@@ -32,8 +37,17 @@ const TemplatedApiException = buildTemplatedApiExceptionDecorator(
     path: 'string',
     message: '$description',
     reasons: 'string',
+    clientCode: '$clientCode',
   },
-  { requiredProperties: ['statusCode', 'message', 'timestamp'] },
+  {
+    requiredProperties: ['statusCode', 'message', 'timestamp'],
+    placeholders: {
+      clientCode: buildPlaceholder(
+        () => BaseException,
+        (exception) => exception.getClientCode(),
+      ),
+    },
+  },
 );
 
 @Controller()
@@ -107,6 +121,7 @@ export class AppController {
     MissingPropertyException,
     PayloadMissingException,
     CustomNotFoundException,
+    UserUnauthorizedException,
   ])
   putResource() {
     return 'resource has been updated';
@@ -122,4 +137,15 @@ export class AppController {
   throwException() {
     throw new BadRequestException();
   }
+
+  // @Put('/exception')
+  // @ApiOperation({
+  //   summary: 'This is an example with an error',
+  // })
+  // @ApiException(() => BadRequestException, {
+  //   template: () => SwaggerAnnotations,
+  // })
+  // throwExceptionWithAnnotatedTemplate() {
+  //   throw new BadRequestException();
+  // }
 }

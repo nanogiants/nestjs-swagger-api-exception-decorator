@@ -1,30 +1,80 @@
 import { HttpException } from '@nestjs/common';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { MergedOptions, Template } from '../interfaces/options.interface';
+import { buildPlaceholder } from '../builder/placeholder.builder';
+import { MergedOptions, Placeholder, Template } from '../interfaces/options.interface';
 import { merge } from './example.util';
 import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
 
-const PlaceholderExceptionMapping = {
-  $status: 'getStatus',
-  $description: 'message',
+const PLACEHOLDER_IDENTIFIER = '$';
+
+const isString = (value: unknown): value is string => typeof value === 'string';
+
+// This builds a placeholder builder without an exception matcher
+const buildGenericPlaceholder = (resolver: (exception: HttpException) => any) => buildPlaceholder(undefined, resolver);
+
+const BuiltinPlaceholders: Record<string, Placeholder> = {
+  status: buildGenericPlaceholder(exception => exception.getStatus()),
+  description: buildGenericPlaceholder(exception => {
+    const response = exception.getResponse();
+    if (typeof response === 'string') {
+      return response;
+    }
+
+    return response['message'];
+  }),
+  error: buildGenericPlaceholder(exception => {
+    const response = exception.getResponse();
+    if (typeof response === 'string') {
+      return response;
+    }
+
+    if (response['error']) {
+      return response['error'];
+    }
+
+    return response['message'];
+  }),
 };
 
 const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
-    if (typeof template[key] === 'string') {
-      const placeholderProperty = PlaceholderExceptionMapping[template[key] as string];
-      if (placeholderProperty) {
-        if (typeof exception[placeholderProperty] === 'function') {
-          template[key] = exception[placeholderProperty]();
+    let templateValue = template[key];
+
+    const setTemplateValue = (value: unknown) => {
+      template[key] = value;
+      templateValue = value;
+    };
+
+    const deleteTemplateValue = () => {
+      delete template[key];
+      templateValue = undefined;
+    };
+
+    const isPlaceholder = () => isString(templateValue) && templateValue.startsWith(PLACEHOLDER_IDENTIFIER);
+    if (isPlaceholder()) {
+      const placeholder = (templateValue as string).substring(1);
+
+      if (BuiltinPlaceholders[placeholder]) {
+        const { resolver } = BuiltinPlaceholders[placeholder];
+        setTemplateValue(resolver(exception));
+      }
+
+      if (options.placeholders?.[placeholder]) {
+        const { exceptionMatcher, resolver } = options.placeholders[placeholder];
+        if (exception instanceof exceptionMatcher()) {
+          setTemplateValue(resolver(exception));
         } else {
-          template[key] = exception[placeholderProperty];
+          deleteTemplateValue();
         }
       }
-    } else if (typeof template[key] === 'object' && template[key] !== null) {
-      // Deep traverse all nested keys if object
-      resolvePlaceholders(template[key] as Record<string, unknown>, exception, options);
+
+      if (isPlaceholder()) {
+        deleteTemplateValue();
+      }
+    } else if (templateValue !== null && typeof templateValue === 'object') {
+      resolvePlaceholders(templateValue as Record<string, unknown>, exception, options);
     }
   }
 };
