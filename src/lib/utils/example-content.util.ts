@@ -1,20 +1,42 @@
 import { HttpException } from '@nestjs/common';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { MergedOptions, Template } from '../interfaces/options.interface';
+import { buildPlaceholder } from '../builder/placeholder.builder';
+import { MergedOptions, Placeholder, Template } from '../interfaces/options.interface';
 import { merge } from './example.util';
 import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
 
-const PlaceholderExceptionMapping = {
-  status: 'statusCode',
-  description: 'message',
-  error: 'error',
-};
-
 const PLACEHOLDER_IDENTIFIER = '$';
 
 const isString = (value: unknown): value is string => typeof value === 'string';
+
+// This builds a placeholder builder without an exception matcher
+const buildGenericPlaceholder = (resolver: (exception: HttpException) => any) => buildPlaceholder(undefined, resolver);
+
+const BuiltinPlaceholders: Record<string, Placeholder> = {
+  status: buildGenericPlaceholder(exception => exception.getStatus()),
+  description: buildGenericPlaceholder(exception => {
+    const response = exception.getResponse();
+    if (typeof response === 'string') {
+      return response;
+    }
+
+    return response['message'];
+  }),
+  error: buildGenericPlaceholder(exception => {
+    const response = exception.getResponse();
+    if (typeof response === 'string') {
+      return response;
+    }
+
+    if (response['error']) {
+      return response['error'];
+    }
+
+    return response['message'];
+  }),
+};
 
 const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
@@ -32,23 +54,15 @@ const resolvePlaceholders = (template: Template, exception: HttpException, optio
 
     const isPlaceholder = () => isString(templateValue) && templateValue.startsWith(PLACEHOLDER_IDENTIFIER);
     if (isPlaceholder()) {
-      const placeholderValue = (templateValue as string).substring(1);
+      const placeholder = (templateValue as string).substring(1);
 
-      const placeholderProperty = PlaceholderExceptionMapping[placeholderValue];
-      if (placeholderProperty) {
-        const exceptionResponse = exception.getResponse();
-        let resolvedValue = exceptionResponse[placeholderProperty];
-
-        if (placeholderProperty === 'error' && !options.userDefinedTemplate && typeof resolvedValue === 'undefined') {
-          // If placeholder is error it could be that error is undefined. So we need to return the description (message) here
-          resolvedValue = exceptionResponse['message'];
-        }
-
-        setTemplateValue(resolvedValue);
+      if (BuiltinPlaceholders[placeholder]) {
+        const { resolver } = BuiltinPlaceholders[placeholder];
+        setTemplateValue(resolver(exception));
       }
 
-      if (options.placeholders?.[placeholderValue]) {
-        const { exceptionMatcher, resolver } = options.placeholders[placeholderValue];
+      if (options.placeholders?.[placeholder]) {
+        const { exceptionMatcher, resolver } = options.placeholders[placeholder];
         if (exception instanceof exceptionMatcher()) {
           setTemplateValue(resolver(exception));
         } else {

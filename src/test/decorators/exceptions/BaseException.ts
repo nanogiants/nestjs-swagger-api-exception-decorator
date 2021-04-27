@@ -16,3 +16,9 @@ export class UserUnauthorizedException extends BaseException {
     super(body, HttpStatus.UNAUTHORIZED, 1000);
   }
 }
+
+export class ExceptionWithoutError extends HttpException {
+  constructor() {
+    super('test', HttpStatus.UNAUTHORIZED);
+  }
+}

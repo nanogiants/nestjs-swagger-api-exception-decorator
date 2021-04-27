@@ -4,7 +4,7 @@ import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/o
 export type Template = Record<string, unknown>;
 
 export type Placeholder = {
-  exceptionMatcher: () => Type<HttpException>;
+  exceptionMatcher?: () => Type<HttpException>;
   resolver: (exception: HttpException) => any;
 };
 

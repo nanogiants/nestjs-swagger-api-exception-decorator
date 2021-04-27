@@ -5,7 +5,7 @@ import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } fr
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { buildPlaceholder, ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
-import { BaseException, UserUnauthorizedException } from './exceptions/BaseException';
+import { BaseException, ExceptionWithoutError, UserUnauthorizedException } from './exceptions/BaseException';
 import { SwaggerAnnotations } from './type/swagger-annotation';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
@@ -17,6 +17,7 @@ const TemplatedApiExceptionWithRequiredProperties = buildTemplatedApiExceptionDe
   {
     statusCode: '$status',
     description: '$description',
+    error: '$error',
     reasons: [],
     fixedValue: 123,
   },
@@ -30,6 +31,7 @@ const TemplatedApiExceptionWithCustomPlaceholder = buildTemplatedApiExceptionDec
     statusCode: '$status',
     description: '$description',
     clientCode: '$clientCode',
+    error: '$error',
     missingPlaceholder: '$not_existing',
   },
   {
@@ -71,7 +73,7 @@ class CustomBadRequestException2 extends BadRequestException {
 
 class CustomNotFoundException extends NotFoundException {
   constructor() {
-    super('Not Found');
+    super('Custom Not Found');
   }
 }
 
@@ -93,6 +95,19 @@ describe('Decorator', () => {
       it('should use the default template', () => {
         class DefaultTemplate {
           @ApiException(() => BadRequestException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
+      });
+    });
+
+    describe('given valid NestJS subclassed exception without error', () => {
+      it('should use the default template', () => {
+        class DefaultTemplate {
+          @ApiException(() => ExceptionWithoutError)
           test() {
             return;
           }

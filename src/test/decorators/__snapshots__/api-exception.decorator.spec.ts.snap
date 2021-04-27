@@ -513,6 +513,51 @@ Object {
 }
 `;
 
+exports[`Decorator @ApiException - single exception given valid NestJS subclassed exception without error should use the default template 1`] = `
+Object {
+  "content": Object {
+    "application/json": Object {
+      "examples": Object {
+        "ExceptionWithoutError": Object {
+          "description": "test",
+          "value": Object {
+            "error": "test",
+            "message": "test",
+            "statusCode": 401,
+          },
+        },
+      },
+      "schema": Object {
+        "description": undefined,
+        "properties": Object {
+          "error": Object {
+            "example": "test",
+            "type": "string",
+          },
+          "message": Object {
+            "example": "test",
+            "type": "string",
+          },
+          "statusCode": Object {
+            "example": 401,
+            "type": "number",
+          },
+        },
+        "required": Array [
+          "statusCode",
+          "message",
+        ],
+        "type": "object",
+      },
+    },
+  },
+  "description": "",
+  "isArray": undefined,
+  "status": 401,
+  "type": undefined,
+}
+`;
+
 exports[`Decorator @TemplatedApiException - single exception given a directly instantiated exception should should use the already instantiated exception 1`] = `
 Object {
   "content": Object {
@@ -684,6 +729,7 @@ Object {
             "description": "Bad Request",
             "value": Object {
               "description": "Bad Request",
+              "error": "Bad Request",
               "statusCode": 400,
             },
           },
@@ -692,6 +738,10 @@ Object {
           "description": undefined,
           "properties": Object {
             "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "error": Object {
               "example": "Bad Request",
               "type": "string",
             },
@@ -721,6 +771,7 @@ Object {
             "value": Object {
               "clientCode": 1000,
               "description": "User is not authorized",
+              "error": "Unauthorized",
               "statusCode": 401,
             },
           },
@@ -734,6 +785,10 @@ Object {
             },
             "description": Object {
               "example": "User is not authorized",
+              "type": "string",
+            },
+            "error": Object {
+              "example": "Unauthorized",
               "type": "string",
             },
             "statusCode": Object {
@@ -766,6 +821,7 @@ Object {
             "description": "Bad Request",
             "value": Object {
               "description": "Bad Request",
+              "error": "Bad Request",
               "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 400,
@@ -776,6 +832,10 @@ Object {
           "description": undefined,
           "properties": Object {
             "description": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "error": Object {
               "example": "Bad Request",
               "type": "string",
             },
@@ -809,9 +869,10 @@ Object {
       "application/json": Object {
         "examples": Object {
           "CustomNotFoundException": Object {
-            "description": "Not Found",
+            "description": "Custom Not Found",
             "value": Object {
-              "description": "Not Found",
+              "description": "Custom Not Found",
+              "error": "Not Found",
               "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
@@ -821,6 +882,7 @@ Object {
             "description": "hallo",
             "value": Object {
               "description": "hallo",
+              "error": "Not Found",
               "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
@@ -830,6 +892,7 @@ Object {
             "description": "Not Found",
             "value": Object {
               "description": "Not Found",
+              "error": "Not Found",
               "fixedValue": 123,
               "reasons": Array [],
               "statusCode": 404,
@@ -841,6 +904,10 @@ Object {
           "properties": Object {
             "description": Object {
               "example": "hallo",
+              "type": "string",
+            },
+            "error": Object {
+              "example": "Not Found",
               "type": "string",
             },
             "fixedValue": Object {
@@ -914,9 +981,9 @@ Object {
       "application/json": Object {
         "examples": Object {
           "CustomNotFoundException": Object {
-            "description": "Not Found",
+            "description": "Custom Not Found",
             "value": Object {
-              "description": "Not Found",
+              "description": "Custom Not Found",
               "statusCode": 404,
             },
           },

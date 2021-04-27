@@ -41,7 +41,7 @@ The template specifies the example value which will be shown in Swagger UI.
 | :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------- |
 | `$status`      | Resolved with the status code of the exception                                                                                              | `404`                    |
 | `$description` | Either resolved with the description passed as option or if no description is specified, the messages of the passed exceptions will be used | `User is not authorized` |
-| `$error`       | The HTTP status code error                                                                                                                  | `Not Found`              |
+| `$error`       | The HTTP status code error. Please keep in mind, that if `error` is undefined, the $description will be used as fallback.                   | `Not Found`              |
 
 You may also specify your own placeholders with the [`placeholders`](#placeholders) property.
 
