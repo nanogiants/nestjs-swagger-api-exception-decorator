@@ -4,13 +4,46 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
-import { ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { buildPlaceholder, ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { BaseException, ExceptionWithoutError, UserUnauthorizedException } from './exceptions/BaseException';
 import { SwaggerAnnotations } from './type/swagger-annotation';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
   description: '$description',
 });
+
+const TemplatedApiExceptionWithRequiredProperties = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    description: '$description',
+    error: '$error',
+    reasons: [],
+    fixedValue: 123,
+  },
+  {
+    requiredProperties: ['description', 'reasons'],
+  },
+);
+
+const TemplatedApiExceptionWithCustomPlaceholder = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    description: '$description',
+    clientCode: '$clientCode',
+    error: '$error',
+    missingPlaceholder: '$not_existing',
+  },
+  {
+    requiredProperties: ['description', 'statusCode'],
+    placeholders: {
+      clientCode: buildPlaceholder(
+        () => BaseException,
+        exception => exception.getClientCode(),
+      ),
+    },
+  },
+);
 
 jest.mock('@nestjs/swagger', () => {
   const {
@@ -40,7 +73,7 @@ class CustomBadRequestException2 extends BadRequestException {
 
 class CustomNotFoundException extends NotFoundException {
   constructor() {
-    super('Not Found');
+    super('Custom Not Found');
   }
 }
 
@@ -62,6 +95,19 @@ describe('Decorator', () => {
       it('should use the default template', () => {
         class DefaultTemplate {
           @ApiException(() => BadRequestException)
+          test() {
+            return;
+          }
+        }
+
+        expect(ApiResponseMock.mock.calls[0][0]).toMatchSnapshot();
+      });
+    });
+
+    describe('given valid NestJS subclassed exception without error', () => {
+      it('should use the default template', () => {
+        class DefaultTemplate {
+          @ApiException(() => ExceptionWithoutError)
           test() {
             return;
           }
@@ -276,6 +322,42 @@ describe('Decorator', () => {
 
         expect(meta).toMatchSnapshot();
       });
+    });
+  });
+
+  describe('@TemplatedApiExceptionWithRequiredProperties - with some required properties', () => {
+    it('should properly define the required properties', () => {
+      @TemplatedApiExceptionWithRequiredProperties(() => CustomBadRequestException)
+      @TemplatedApiExceptionWithRequiredProperties(() => [CustomNotFoundException, NotFoundException])
+      class RequiredProperties {
+        @ApiOperation({ description: 'test' })
+        @TemplatedApiExceptionWithRequiredProperties(() => new CustomNotFoundExceptionWithArrayMessage(['hallo']))
+        test() {
+          return;
+        }
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(RequiredProperties.prototype, 'test');
+      const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+      expect(meta).toMatchSnapshot();
+    });
+  });
+
+  describe('@TemplatedApiExceptionWithCustomPlaceholder - with some custom placeholders', () => {
+    it('should properly use the custom placeholder resolvers', () => {
+      class CustomPlaceholders {
+        @ApiOperation({ description: 'test' })
+        @TemplatedApiExceptionWithCustomPlaceholder(() => [UserUnauthorizedException, BadRequestException])
+        test() {
+          return;
+        }
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(CustomPlaceholders.prototype, 'test');
+      const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+      expect(meta).toMatchSnapshot();
     });
   });
 

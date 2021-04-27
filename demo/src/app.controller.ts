@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Controller,
   NotFoundException,
   Patch,
@@ -10,6 +11,7 @@ import {
 import {
   ApiException,
   buildTemplatedApiExceptionDecorator,
+  buildPlaceholder,
 } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 
 import { AppService } from './app.service';
@@ -19,21 +21,40 @@ import {
   PayloadMissingException,
 } from './exceptions';
 import { ApiExtraModels, ApiOperation, getSchemaPath } from '@nestjs/swagger';
-import { SwaggerAnnotations } from './swagger-annotations';
+import {
+  BaseExceptionTemplate,
+  SwaggerAnnotations,
+} from './swagger-annotations';
+import {
+  BaseException,
+  UserUnauthorizedException,
+} from './exceptions/placeholders/exceptions';
 
-const TemplatedApiException = buildTemplatedApiExceptionDecorator({
-  statusCode: '$status',
-  timestamp: '01.01.1970T15:30:11',
-  path: 'string',
-  message: '$description',
-  reasons: 'string',
-});
+const TemplatedApiException = buildTemplatedApiExceptionDecorator(
+  {
+    statusCode: '$status',
+    timestamp: '01.01.1970T15:30:11',
+    path: 'string',
+    message: '$description',
+    reasons: 'string',
+    clientCode: '$clientCode',
+  },
+  {
+    requiredProperties: ['statusCode', 'message', 'timestamp'],
+    placeholders: {
+      clientCode: buildPlaceholder(
+        () => BaseException,
+        (exception) => exception.getClientCode(),
+      ),
+    },
+  },
+);
 
 @Controller()
 @ApiException(() => UnauthorizedException, {
   description: 'User is not authorized',
 })
-@ApiExtraModels(SwaggerAnnotations)
+@ApiExtraModels(SwaggerAnnotations, BaseExceptionTemplate)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -60,7 +81,14 @@ export class AppController {
 
   @Post('/log')
   @ApiOperation({ summary: 'Log something' })
-  @ApiException(() => BadRequestException, { type: () => SwaggerAnnotations })
+  @ApiException(() => BadRequestException, {
+    type: () => SwaggerAnnotations,
+  })
+  @ApiException(() => NotFoundException, { type: () => SwaggerAnnotations })
+  @ApiException(() => UnauthorizedException, {
+    type: () => SwaggerAnnotations,
+  })
+  @ApiException(() => ConflictException, { type: () => SwaggerAnnotations })
   logSomething() {
     return 'something logged';
   }
@@ -93,6 +121,7 @@ export class AppController {
     MissingPropertyException,
     PayloadMissingException,
     CustomNotFoundException,
+    UserUnauthorizedException,
   ])
   putResource() {
     return 'resource has been updated';
@@ -108,4 +137,15 @@ export class AppController {
   throwException() {
     throw new BadRequestException();
   }
+
+  // @Put('/exception')
+  // @ApiOperation({
+  //   summary: 'This is an example with an error',
+  // })
+  // @ApiException(() => BadRequestException, {
+  //   template: () => SwaggerAnnotations,
+  // })
+  // throwExceptionWithAnnotatedTemplate() {
+  //   throw new BadRequestException();
+  // }
 }

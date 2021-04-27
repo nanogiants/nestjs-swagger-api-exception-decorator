@@ -56,23 +56,23 @@ export function ApiException<T extends HttpException>(exceptions: ExceptionArgum
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
     printWarningIfUsingDeprecatedSignature(exceptions, target, propertyKey);
 
-    const content = getApiResponseContent(target, descriptor);
+    if (descriptor) {
+      const content = getApiResponseContent(target, descriptor);
 
-    for (const [statusCode, newContent] of Object.entries(newContents)) {
-      if (content?.[statusCode]) {
-        const existingContent = content[statusCode].content;
-        mergeExampleContent(existingContent, newContent);
-      } else {
-        if (descriptor) {
+      for (const [statusCode, newContent] of Object.entries(newContents)) {
+        if (content?.[statusCode]) {
+          const existingContent = content[statusCode].content;
+          mergeExampleContent(existingContent, newContent);
+        } else {
           ApiResponse({ status: parseInt(statusCode), content: newContents[statusCode] })(
             target,
             propertyKey,
             descriptor,
           );
-        } else {
-          applyClassDecorator(target, passedExceptions, options);
         }
       }
+    } else {
+      applyClassDecorator(target, passedExceptions, options);
     }
 
     return descriptor ? descriptor : target;
