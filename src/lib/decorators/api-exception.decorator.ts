@@ -57,7 +57,7 @@ export function ApiException<T extends HttpException>(exceptions: ExceptionArgum
     printWarningIfUsingDeprecatedSignature(exceptions, target, propertyKey);
 
     if (descriptor) {
-      const content = getApiResponseContent(target, descriptor);
+      const content = getApiResponseContent(descriptor);
 
       for (const [statusCode, newContent] of Object.entries(newContents)) {
         if (content?.[statusCode]) {
