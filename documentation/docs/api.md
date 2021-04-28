@@ -8,12 +8,14 @@ This document covers all additional option properties which may be passed to the
 
 ```typescript
 {
-  template?: any;
+  template?: Record<string, unknown>;
+  requiredProperties?: (keyof template)[];
   contentType?: string;
   description?: string;
   schema?: SchemaObject | ReferenceObject;
   type?: () => string | Function;
   isArray?: boolean;
+  placeholders?: Record<string, Placeholder>;
 }
 ```
 
