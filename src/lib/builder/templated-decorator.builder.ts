@@ -1,4 +1,4 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, Type } from '@nestjs/common';
 
 import { ApiException } from '..';
 import {
@@ -17,7 +17,7 @@ import { areExceptionsPassedWithoutArrowFunction } from '../utils/exception.util
  * @param globalOptions Specify the content type
  */
 export const buildTemplatedApiExceptionDecorator = <T = Template>(
-  template: T,
+  template: T | (() => Type<unknown>),
   globalOptions?: Omit<Options<T>, 'template'>,
 ) => {
   return <Exception extends HttpException>(exceptions: ExceptionArguments<Exception>, options?: Options<T>) => {

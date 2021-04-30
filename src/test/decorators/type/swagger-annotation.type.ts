@@ -34,6 +34,6 @@ export class SwaggerAnnotations {
   @ApiProperty({ type: Boolean })
   property4: boolean;
 
-  @ApiProperty({ type: Number, example: '$status' })
+  @ApiProperty({ type: Number, example: '$status', required: false })
   statusCode: number;
 }

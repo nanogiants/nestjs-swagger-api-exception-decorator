@@ -9,7 +9,7 @@ export type Placeholder = {
 };
 
 export interface Options<T = Template> {
-  template?: T;
+  template?: T | (() => Type<unknown>);
   requiredProperties?: (keyof T)[];
   contentType?: string;
   description?: string;
