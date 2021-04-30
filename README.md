@@ -32,4 +32,4 @@ export class Controller {
 
 ## Documentation
 
-Please visit the [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/) for more examples and information, such as body templates, placeholders etc.
+Please visit our [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/) for examples and information on how to use this decorator.

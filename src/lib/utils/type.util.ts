@@ -16,8 +16,8 @@ const resolveLazyTypeFunction = (type: SchemaObjectMetadata['type']): any =>
   isFunction(type) && !isClass(type) && type.name === 'type' ? type() : type;
 
 const getExampleValue = (metadata: SchemaObjectMetadata) => {
-  if (typeof metadata.example !== 'undefined') {
-    return metadata.example;
+  if (typeof metadata.example !== 'undefined' || typeof metadata.examples !== 'undefined') {
+    return metadata.isArray ? metadata.examples : metadata.example;
   }
 
   if (metadata.enum?.length) {
@@ -27,12 +27,22 @@ const getExampleValue = (metadata: SchemaObjectMetadata) => {
   return (metadata.type as () => void).name;
 };
 
-const buildExampleMessage = (options: MergedOptions, deepMetadata?: SchemaObjectMetadata) => {
-  const typeArgument = deepMetadata?.type || options.type;
+interface ExampleResponseSettings {
+  options: MergedOptions;
+  deepMetadata?: SchemaObjectMetadata;
+  typeKey?: string;
+}
+
+const buildExampleResponse = (settings: ExampleResponseSettings) => {
+  const { options, deepMetadata, typeKey = 'type' } = settings;
+
+  const typeArgument = deepMetadata?.type || options[typeKey];
   const isArrayArgument = deepMetadata?.type ? !!deepMetadata.isArray : options.isArray;
 
   const [_type, isArray] = getTypeIsArrayTuple(typeArgument, isArrayArgument);
-  const type = resolveLazyTypeFunction(_type);
+  const type = typeKey === 'type' ? resolveLazyTypeFunction(_type) : _type();
+
+  const requiredProperties = [];
 
   const messageExample: Record<string, any> = {};
 
@@ -46,10 +56,18 @@ const buildExampleMessage = (options: MergedOptions, deepMetadata?: SchemaObject
     metadata.type = resolveLazyTypeFunction(metadata.type);
 
     if (isClass(metadata.type)) {
-      messageExample[property] = buildExampleMessage(options, metadata);
+      messageExample[property] = buildExampleResponse({ options, deepMetadata: metadata });
     } else {
       messageExample[property] = getExampleValue(metadata);
+
+      if (!deepMetadata && metadata.required) {
+        requiredProperties.push(property);
+      }
     }
+  }
+
+  if (requiredProperties.length && !options.requiredProperties) {
+    options.requiredProperties = requiredProperties;
   }
 
   return isArray ? [messageExample] : messageExample;
@@ -57,6 +75,15 @@ const buildExampleMessage = (options: MergedOptions, deepMetadata?: SchemaObject
 
 export const buildMessageByType = (template: Template, options: MergedOptions) => {
   if (!options.userDefinedTemplate && options.type) {
-    template.message = buildExampleMessage(options);
+    template.message = buildExampleResponse({ options });
+  }
+};
+
+export const resolveTypeTemplate = (options: MergedOptions) => {
+  if (options?.template && typeof options.template === 'function') {
+    options.template = buildExampleResponse({
+      options,
+      typeKey: 'template',
+    });
   }
 };

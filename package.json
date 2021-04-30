@@ -1,6 +1,6 @@
 {
   "name": "@nanogiants/nestjs-swagger-api-exception-decorator",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "NestJS Swagger decorator for API exceptions",
   "main": "./dist/index",
   "types": "./dist/index",

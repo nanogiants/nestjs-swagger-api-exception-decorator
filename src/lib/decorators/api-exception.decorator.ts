@@ -15,6 +15,7 @@ import {
   printWarningIfUsingDeprecatedSignature,
 } from '../utils/exception.util';
 import { mergeOptions } from '../utils/options.util';
+import { resolveTypeTemplate } from '../utils/type.util';
 
 type Decorator = ClassDecorator & MethodDecorator;
 
@@ -49,6 +50,8 @@ export function ApiException<T extends HttpException>(exceptions: ExceptionArgum
     passedExceptions = (exceptions as ExceptionOrExceptionArrayFunc<T>)();
   }
 
+  resolveTypeTemplate(options);
+
   const mergedOptions = mergeOptions(options);
   const instances = instantiateExceptions(passedExceptions);
   const newContents = buildContentObjects(instances, mergedOptions);
@@ -57,7 +60,7 @@ export function ApiException<T extends HttpException>(exceptions: ExceptionArgum
     printWarningIfUsingDeprecatedSignature(exceptions, target, propertyKey);
 
     if (descriptor) {
-      const content = getApiResponseContent(target, descriptor);
+      const content = getApiResponseContent(descriptor);
 
       for (const [statusCode, newContent] of Object.entries(newContents)) {
         if (content?.[statusCode]) {
