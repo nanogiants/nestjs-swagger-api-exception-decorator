@@ -14,8 +14,7 @@ export interface Options<T = Template> {
   contentType?: string;
   description?: string;
   schema?: SchemaObject | ReferenceObject;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  type?: () => string | Function;
+  type?: () => string | Type<unknown>;
   isArray?: boolean;
   placeholders?: Record<string, Placeholder>;
 }
