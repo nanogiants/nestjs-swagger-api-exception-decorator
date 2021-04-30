@@ -28,3 +28,6 @@ jest.config.js
 tsconfig.build.json
 demo
 documentation
+sonar-project.properties
+.eslintrc.js
+coverage
