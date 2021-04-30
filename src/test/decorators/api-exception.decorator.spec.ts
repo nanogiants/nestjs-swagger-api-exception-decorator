@@ -4,9 +4,10 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
-import { buildPlaceholder, ApiException, buildTemplatedApiExceptionDecorator } from '../../lib';
+import { ApiException, buildPlaceholder, buildTemplatedApiExceptionDecorator } from '../../lib';
 import { BaseException, ExceptionWithoutError, UserUnauthorizedException } from './exceptions/BaseException';
-import { SwaggerAnnotations } from './type/swagger-annotation';
+import { BaseExceptionType } from './type/base-exception.type';
+import { SwaggerAnnotations } from './type/swagger-annotation.type';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
@@ -44,6 +45,8 @@ const TemplatedApiExceptionWithCustomPlaceholder = buildTemplatedApiExceptionDec
     },
   },
 );
+
+const TemplatedApiExceptionWithTemplateType = buildTemplatedApiExceptionDecorator(() => BaseExceptionType);
 
 jest.mock('@nestjs/swagger', () => {
   const {
@@ -355,6 +358,23 @@ describe('Decorator', () => {
       }
 
       const descriptor = Object.getOwnPropertyDescriptor(CustomPlaceholders.prototype, 'test');
+      const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
+
+      expect(meta).toMatchSnapshot();
+    });
+  });
+
+  describe('@TemplatedApiExceptionWithTemplateType', () => {
+    it('should properly use the template type', () => {
+      class TemplateType {
+        @ApiOperation({ description: 'test' })
+        @TemplatedApiExceptionWithTemplateType(() => [UserUnauthorizedException, BadRequestException])
+        test() {
+          return;
+        }
+      }
+
+      const descriptor = Object.getOwnPropertyDescriptor(TemplateType.prototype, 'test');
       const meta = Reflect.getMetadata(DECORATORS.API_RESPONSE, descriptor.value);
 
       expect(meta).toMatchSnapshot();

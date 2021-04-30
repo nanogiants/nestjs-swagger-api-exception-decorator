@@ -8,12 +8,12 @@ This document covers all additional option properties which may be passed to the
 
 ```typescript
 {
-  template?: Record<string, unknown>;
+  template?: Record<string, unknown> | (() => Type<unknown>);
   requiredProperties?: (keyof template)[];
   contentType?: string;
   description?: string;
   schema?: SchemaObject | ReferenceObject;
-  type?: () => string | Function;
+  type?: () => string | Type<unknown>;
   isArray?: boolean;
   placeholders?: Record<string, Placeholder>;
 }
@@ -37,15 +37,34 @@ All properties are optional.
 
 The template specifies the example value which will be shown in Swagger UI.
 
-#### Possible placeholders
+#### JSON object
 
-| Placeholder    | Description                                                                                                                                 | Example                  |
-| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ | :----------------------- |
-| `$status`      | Resolved with the status code of the exception                                                                                              | `404`                    |
-| `$description` | Either resolved with the description passed as option or if no description is specified, the messages of the passed exceptions will be used | `User is not authorized` |
-| `$error`       | The HTTP status code error. Please keep in mind, that if `error` is undefined, the $description will be used as fallback.                   | `Not Found`              |
+You may pass an `Record` containing key value pairs for your template including the following placeholders:
+
+| Placeholder    | Description                                                                                                                                 | Example              |
+| :------------- | :------------------------------------------------------------------------------------------------------------------------------------------ | :------------------- |
+| `$status`      | Resolved with the status code of the exception                                                                                              | `404`                |
+| `$description` | Either resolved with the description passed as option or if no description is specified, the messages of the passed exceptions will be used | `User was not found` |
+| `$error`       | The HTTP status code error. Please keep in mind, that if `error` is undefined, `$description` will be used as fallback.                     | `Not Found`          |
 
 You may also specify your own placeholders with the [`placeholders`](#placeholders) property.
+
+#### Swagger annotated class
+
+Additionally you may pass any Swagger annotated class as `template`.
+
+The following `@ApiProperty` properties are used to generate an example value and schema:
+* `isArray`
+* `example` if `isArray === false`
+  * `example` may contain any builtin or custom placeholder as described above
+* `examples` if `isArray === true`
+  * `examples` may contain any builtin or custom placeholder as described above
+* `required`
+  * If using any Swagger annotated class together with the [`requiredProperties` option](#requiredproperties), the `requiredProperties` array won't be overwritten.
+* `enum`
+  * Please keep in mind that the first enum value are used as example value. If you want to override the example value, please use the `example` property
+
+If you need an additional `@ApiProperty` property to be available to generate the example value and schema please [open an issue](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/issues/new) on GitHub.
 
 ### `contentType`
 

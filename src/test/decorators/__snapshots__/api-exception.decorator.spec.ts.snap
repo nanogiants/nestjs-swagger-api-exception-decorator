@@ -938,6 +938,101 @@ Object {
 }
 `;
 
+exports[`Decorator @TemplatedApiExceptionWithTemplateType should properly use the template type 1`] = `
+Object {
+  "400": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "BadRequestException": Object {
+            "description": "Bad Request",
+            "value": Object {
+              "error": Array [
+                "Bad Request",
+              ],
+              "message": "Bad Request",
+              "statusCode": 400,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "error": Object {
+              "example": Array [
+                "Bad Request",
+              ],
+              "type": "object",
+            },
+            "message": Object {
+              "example": "Bad Request",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 400,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "message",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+  "401": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "UserUnauthorizedException": Object {
+            "description": "User is not authorized",
+            "value": Object {
+              "error": Array [
+                "Unauthorized",
+              ],
+              "message": "User is not authorized",
+              "statusCode": 401,
+            },
+          },
+        },
+        "schema": Object {
+          "description": undefined,
+          "properties": Object {
+            "error": Object {
+              "example": Array [
+                "Unauthorized",
+              ],
+              "type": "object",
+            },
+            "message": Object {
+              "example": "User is not authorized",
+              "type": "string",
+            },
+            "statusCode": Object {
+              "example": 401,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+            "message",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
+
 exports[`Decorator usage of multiple @ApiException given multiple @ApiException decorators when method has @ApiOperation attached should be grouped correctly 1`] = `
 Object {
   "400": Object {
