@@ -1,4 +1,8 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 
 export class MissingPropertyException extends BadRequestException {
   constructor() {
@@ -14,5 +18,16 @@ export class PayloadMissingException extends BadRequestException {
 export class CustomNotFoundException extends NotFoundException {
   constructor() {
     super('Payload not found');
+  }
+}
+export class EmailResponseFailedException extends InternalServerErrorException {
+  constructor() {
+    super('Email Response Failed');
+  }
+}
+
+export class InternalServerException extends InternalServerErrorException {
+  constructor() {
+    super('Something went wrong');
   }
 }
