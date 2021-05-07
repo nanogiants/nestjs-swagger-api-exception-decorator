@@ -7,8 +7,6 @@ object-assign
 /* NProgress, (c) 2013, 2014 Rico Sta. Cruz - http://ricostacruz.com/nprogress
  * @license MIT */
 
-/*! medium-zoom 1.0.4 | MIT License | https://github.com/francoischalifour/medium-zoom */
-
 /** @license React v0.20.2
  * scheduler.production.min.js
  *
