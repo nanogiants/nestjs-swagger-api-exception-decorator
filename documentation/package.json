@@ -8,7 +8,7 @@
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
-    "serve": "docusaurus serve",
+    "serve": "docusaurus build --out-dir build/nestjs-swagger-api-exception-decorator && docusaurus serve",
     "clear": "docusaurus clear"
   },
   "dependencies": {
