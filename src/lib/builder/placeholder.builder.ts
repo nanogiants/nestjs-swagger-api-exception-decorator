@@ -1,5 +1,7 @@
 import { HttpException, Type } from '@nestjs/common';
 
+import { Placeholder } from '../interfaces/options.interface';
+
 /**
  * Build your own custom placeholder by passing a custom exception and a resolver function
  *
@@ -9,7 +11,7 @@ import { HttpException, Type } from '@nestjs/common';
 export const buildPlaceholder = <T extends HttpException>(
   exception: () => Type<T>,
   resolver: (exception: T) => any,
-) => {
+): Placeholder => {
   return {
     exceptionMatcher: exception,
     resolver,
