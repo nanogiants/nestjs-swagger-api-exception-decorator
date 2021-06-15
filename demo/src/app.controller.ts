@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Controller,
+  Get,
   NotFoundException,
   Patch,
   Post,
@@ -17,6 +18,8 @@ import {
 import { AppService } from './app.service';
 import {
   CustomNotFoundException,
+  EmailResponseFailedException,
+  InternalServerException,
   MissingPropertyException,
   PayloadMissingException,
 } from './exceptions';
@@ -148,4 +151,13 @@ export class AppController {
   // throwExceptionWithAnnotatedTemplate() {
   //   throw new BadRequestException();
   // }
+
+  @Get('issue26')
+  @ApiOperation({
+    summary: 'This is an example for issue #26',
+  })
+  @ApiException(() => [EmailResponseFailedException, InternalServerException])
+  issue26() {
+    throw new EmailResponseFailedException();
+  }
 }

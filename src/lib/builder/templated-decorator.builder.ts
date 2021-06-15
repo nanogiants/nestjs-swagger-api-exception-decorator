@@ -21,7 +21,7 @@ export const buildTemplatedApiExceptionDecorator = <T = Template>(
   globalOptions?: Omit<Options<T>, 'template'>,
 ) => {
   return <Exception extends HttpException>(exceptions: ExceptionArguments<Exception>, options?: Options<T>) => {
-    const mergedOptions = ({ ...globalOptions, template, ...options } as unknown) as Options<Template>;
+    const mergedOptions = { ...globalOptions, template, ...options } as unknown as Options<Template>;
 
     if (areExceptionsPassedWithoutArrowFunction(exceptions)) {
       return ApiException(exceptions as ExceptionOrExceptionArray<Exception>, mergedOptions);

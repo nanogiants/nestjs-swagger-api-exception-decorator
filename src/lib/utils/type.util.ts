@@ -16,7 +16,7 @@ const resolveLazyTypeFunction = (type: SchemaObjectMetadata['type']): any =>
   isFunction(type) && !isClass(type) && type.name === 'type' ? type() : type;
 
 const getExampleValue = (metadata: SchemaObjectMetadata) => {
-  if (typeof metadata.example !== 'undefined' || typeof metadata.examples !== 'undefined') {
+  if (metadata.example !== undefined || metadata.examples !== undefined) {
     return metadata.isArray ? metadata.examples : metadata.example;
   }
 
