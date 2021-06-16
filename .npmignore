@@ -31,3 +31,4 @@ documentation
 sonar-project.properties
 .eslintrc.js
 coverage
+.husky
