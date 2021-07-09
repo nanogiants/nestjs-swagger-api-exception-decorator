@@ -25,7 +25,7 @@ All properties are optional.
 
 ### `template`
 
-*Default*:
+_Default_:
 
 ```typescript
 {
@@ -54,62 +54,64 @@ You may also specify your own placeholders with the [`placeholders`](#placeholde
 Additionally you may pass any Swagger annotated class as `template`.
 
 The following `@ApiProperty` properties are used to generate an example value and schema:
-* `isArray`
-* `example` if `isArray === false`
-  * `example` may contain any builtin or custom placeholder as described above
-* `examples` if `isArray === true`
-  * `examples` may contain any builtin or custom placeholder as described above
-* `required`
-  * If using any Swagger annotated class together with the [`requiredProperties` option](#requiredproperties), the `requiredProperties` array won't be overwritten.
-* `enum`
-  * Please keep in mind that the first enum value are used as example value. If you want to override the example value, please use the `example` property
+
+- `isArray`
+- `example` if `isArray === false`
+  - `example` may contain any builtin or custom placeholder as described above
+- `[example]` if `isArray === true`
+  - Uses `example` value inside an array automatically
+  - Prior `v1.4.4`: Uses `examples` which has been changed with `@nestjs/swagger@4.8.1`
+- `required`
+  - If using any Swagger annotated class together with the [`requiredProperties` option](#requiredproperties), the `requiredProperties` array won't be overwritten.
+- `enum`
+  - Please keep in mind that the first enum value are used as example value. If you want to override the example value, please use the `example` property
 
 If you need an additional `@ApiProperty` property to be available to generate the example value and schema please [open an issue](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/issues/new) on GitHub.
 
 ### `contentType`
 
-*Default*: `application/json`
+_Default_: `application/json`
 
 The content type property specifies the content type in which the example values will be shown.
 
 ### `description`
 
-*Default*: `undefined`
+_Default_: `undefined`
 
 The description specifies the example values message and the description shown in Swagger UI.
 
 ### `schema`
 
-*Default*: The description passed to the decorator or message of the exception will be shown. See [description](#description).
+_Default_: The description passed to the decorator or message of the exception will be shown. See [description](#description).
 
 The schema property can be used to modify the message property only of the example value shown in Swagger UI. It is also possible, to reference to existing schemas using the `ReferenceObject`.
 
 ### `type`
 
-*Default*: `undefined`
+_Default_: `undefined`
 
 The type property can be used to specify already defined Swagger annotated classes.
 
-*Example*:
+_Example_:
 `@ApiException(() => BadRequestException, { type: () => AnySwaggerAnnotatedClass })`
 
 See our [demo project](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/blob/develop/demo/src/app.controller.ts#L70) for a more detailed example.
 
 ### `isArray`
 
-*Default*: `undefined`
+_Default_: `undefined`
 
 The isArray property can only be used in combination with the `type` property. It allows you to let the type be shown as array in Swagger UI.
 
 ### `requiredProperties`
 
-*Default*: All first-level properties specified in `template`.
+_Default_: All first-level properties specified in `template`.
 
 The requiredProperties property is used to mark specific properties as required in the generated schema.
 
 ### `placeholders`
 
-*Default*: `undefined`
+_Default_: `undefined`
 
 The placeholders property can be used to create custom placeholders. This is useful if you want to use a custom exception template. For example:
 
@@ -145,6 +147,7 @@ You may either pass the custom exception and resolver directly as in the example
   },
 }
 ```
+
 :::
 
 See our [demo project](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/blob/develop/demo/src/app.controller.ts#L45) for a more detailed example.
