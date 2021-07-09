@@ -1,4 +1,4 @@
-# @nanogiants/nestjs-swagger-api-exception-decorator
+# NestJS Swagger API Exception Decorator
 
 [![Node.js CI](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanogiants_nestjs-swagger-api-exception-decorator&metric=alert_status)](https://sonarcloud.io/dashboard?id=nanogiants_nestjs-swagger-api-exception-decorator)
@@ -6,15 +6,17 @@
 [![npm](https://img.shields.io/npm/v/@nanogiants/nestjs-swagger-api-exception-decorator)](https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator)
 [![npm downloads](https://img.shields.io/npm/dw/@nanogiants/nestjs-swagger-api-exception-decorator)](https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator)
 
-> NestJS Swagger decorator for API exceptions
+## Description
+
+[NestJS Swagger](https://docs.nestjs.com/openapi/introduction) decorator for API exceptions.
 
 ## Installation
 
 ```sh
-$ npm install @nanogiants/nestjs-swagger-api-exception-decorator
+$ npm i @nanogiants/nestjs-swagger-api-exception-decorator
 ```
 
-## Example usage
+## Example
 
 ```typescript
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
@@ -30,6 +32,6 @@ export class Controller {
 }
 ```
 
-## Documentation
+## Getting started
 
-Please visit our [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/) for examples and information on how to use this decorator.
+Please visit our [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/).
