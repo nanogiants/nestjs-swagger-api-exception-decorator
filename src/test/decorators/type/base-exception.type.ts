@@ -7,6 +7,6 @@ export class BaseExceptionType {
   @ApiProperty({ example: '$description', required: true })
   message: string;
 
-  @ApiProperty({ examples: ['$error'], isArray: true })
+  @ApiProperty({ example: '$error', isArray: true })
   error: string[];
 }

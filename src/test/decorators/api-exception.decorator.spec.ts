@@ -154,7 +154,7 @@ describe('Decorator', () => {
             schema: {
               description: 'custom schema',
               type: 'string',
-              examples: {
+              example: {
                 test: {},
               },
             },

@@ -276,7 +276,7 @@ Object {
           },
           "message": Object {
             "description": "custom schema",
-            "examples": Object {
+            "example": Object {
               "test": Object {},
             },
             "type": "string",
