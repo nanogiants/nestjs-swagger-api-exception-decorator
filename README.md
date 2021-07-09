@@ -38,4 +38,4 @@ Please visit our [documentation](https://nanogiants.github.io/nestjs-swagger-api
 
 ## Release Notes
 
-Please visit the [Release Notes](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/releasenotes/v1.4.0) in our documentation for major and minor releases. Patch releases are documentated in [GitHub Releases](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/releases).
+Please visit the [Release Notes](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/releasenotes/v1.5.0) in our documentation for major and minor releases. Patch releases are documentated in [GitHub Releases](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/releases).
