@@ -36,7 +36,7 @@ module.exports = {
         src: 'img/footerLinedDark.svg',
         href: 'https://nanogiants.de',
       },
-      copyright: `Copyright © ${new Date().getFullYear()} NanoGiants GmbH, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} NanoGiants GmbH. Built with Docusaurus.`,
     },
   },
   presets: [
