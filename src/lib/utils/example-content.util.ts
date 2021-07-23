@@ -8,8 +8,8 @@ import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
 
 const PLACEHOLDER_IDENTIFIER = '$';
-
-const isString = (value: unknown): value is string => typeof value === 'string';
+const isPlaceholder = (value: unknown): value is string =>
+  typeof value === 'string' && value.startsWith(PLACEHOLDER_IDENTIFIER);
 
 // This builds a placeholder builder without an exception matcher
 const buildGenericPlaceholder = (resolver: (exception: HttpException) => any) => buildPlaceholder(undefined, resolver);
@@ -40,41 +40,28 @@ const BuiltinPlaceholders: Record<string, Placeholder> = {
 
 const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
-    let templateValue = template[key];
+    const templateValue = template[key];
 
-    const setTemplateValue = (value: unknown) => {
-      template[key] = value;
-      templateValue = value;
-    };
-
-    const deleteTemplateValue = () => {
-      delete template[key];
-      templateValue = undefined;
-    };
-
-    const isPlaceholder = () => isString(templateValue) && templateValue.startsWith(PLACEHOLDER_IDENTIFIER);
-    if (isPlaceholder()) {
-      const placeholder = (templateValue as string).substring(1);
+    if (isPlaceholder(templateValue)) {
+      const placeholder = templateValue.substring(1);
 
       if (BuiltinPlaceholders[placeholder]) {
         const { resolver } = BuiltinPlaceholders[placeholder];
-        setTemplateValue(resolver(exception));
+        template[key] = resolver(exception);
       }
 
       if (options.placeholders?.[placeholder]) {
         const { exceptionMatcher, resolver } = options.placeholders[placeholder];
         if (exception instanceof exceptionMatcher()) {
-          setTemplateValue(resolver(exception));
-        } else {
-          deleteTemplateValue();
+          template[key] = resolver(exception);
         }
       }
 
-      if (isPlaceholder()) {
-        deleteTemplateValue();
+      if (isPlaceholder(template[key])) {
+        delete template[key];
       }
     } else if (templateValue !== null && typeof templateValue === 'object') {
-      resolvePlaceholders(templateValue as Record<string, unknown>, exception, options);
+      resolvePlaceholders(templateValue as Template, exception, options);
     }
   }
 };
