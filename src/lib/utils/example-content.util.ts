@@ -38,6 +38,11 @@ const BuiltinPlaceholders: Record<string, Placeholder> = {
   }),
 };
 
+const resolveBuiltinPlaceholder = (placeholder: string, exception: HttpException) =>
+  BuiltinPlaceholders[placeholder]
+    ? BuiltinPlaceholders[placeholder].resolver(exception)
+    : `${PLACEHOLDER_IDENTIFIER}${placeholder}`;
+
 const resolvePlaceholders = (template: Template, exception: HttpException, options: MergedOptions) => {
   for (const key of Object.keys(template)) {
     const templateValue = template[key];
@@ -45,10 +50,7 @@ const resolvePlaceholders = (template: Template, exception: HttpException, optio
     if (isPlaceholder(templateValue)) {
       const placeholder = templateValue.substring(1);
 
-      if (BuiltinPlaceholders[placeholder]) {
-        const { resolver } = BuiltinPlaceholders[placeholder];
-        template[key] = resolver(exception);
-      }
+      template[key] = resolveBuiltinPlaceholder(placeholder, exception);
 
       if (options.placeholders?.[placeholder]) {
         const { exceptionMatcher, resolver } = options.placeholders[placeholder];
