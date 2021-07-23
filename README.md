@@ -1,41 +1,33 @@
-# NestJS Swagger API Exception Decorator
+# Website
 
-[![Node.js CI](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI/badge.svg?branch=master)](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/workflows/Node.js%20CI)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nanogiants_nestjs-swagger-api-exception-decorator&metric=alert_status)](https://sonarcloud.io/dashboard?id=nanogiants_nestjs-swagger-api-exception-decorator)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nanogiants_nestjs-swagger-api-exception-decorator&metric=coverage)](https://sonarcloud.io/dashboard?id=nanogiants_nestjs-swagger-api-exception-decorator)
-[![npm](https://img.shields.io/npm/v/@nanogiants/nestjs-swagger-api-exception-decorator)](https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator)
-[![npm downloads](https://img.shields.io/npm/dw/@nanogiants/nestjs-swagger-api-exception-decorator)](https://www.npmjs.com/package/@nanogiants/nestjs-swagger-api-exception-decorator)
-
-## Description
-
-[NestJS Swagger](https://docs.nestjs.com/openapi/introduction) decorator for API exceptions.
+This website is built using [Docusaurus 2](https://v2.docusaurus.io/), a modern static website generator.
 
 ## Installation
 
-```sh
-$ npm i @nanogiants/nestjs-swagger-api-exception-decorator
+```console
+yarn install
 ```
 
-## Example
+## Local Development
 
-```typescript
-import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
-
-@ApiException(() => UnauthorizedException)
-export class Controller {
-  @ApiOperation({ summary: 'Changes the users password' })
-  @ApiException(() => [PasswordsDidNotMatchException, OldAndNewPasswordMatchException, CredentialsNotValidException])
-  @Patch('/password')
-  async changeUserPassword(@Res() res: Response): Promise<void> {
-    return res.sendStatus(HttpStatus.OK);
-  }
-}
+```console
+yarn start
 ```
 
-## Getting Started
+This command starts a local development server and open up a browser window. Most changes are reflected live without having to restart the server.
 
-Please visit our [documentation](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/) to get started.
+## Build
 
-## Release Notes
+```console
+yarn build
+```
 
-Please visit the [Release Notes](https://nanogiants.github.io/nestjs-swagger-api-exception-decorator/releasenotes/v1.5.0) in our documentation for major and minor releases. Patch releases are documentated in [GitHub Releases](https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/releases).
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+## Deployment
+
+```console
+GIT_USER=<Your GitHub username> USE_SSH=true yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
