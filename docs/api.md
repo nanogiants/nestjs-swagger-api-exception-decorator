@@ -7,7 +7,7 @@ This document covers all additional option properties which may be passed to the
 ## Overview
 
 ```typescript
-{
+interface Options {
   template?: Record<string, unknown> | (() => Type<unknown>);
   requiredProperties?: (keyof template)[];
   contentType?: string;
@@ -35,7 +35,7 @@ _Default_:
 }
 ```
 
-The template specifies the example value which will be shown in Swagger UI.
+The template specifies the example value which will be shown in Swagger-UI.
 
 #### JSON object
 
@@ -78,13 +78,13 @@ The content type property specifies the content type in which the example values
 
 _Default_: `undefined`
 
-The description specifies the example values message and the description shown in Swagger UI.
+The description specifies the example values message and the description shown in Swagger-UI. Use this property to overwrite the `HttpException` description.
 
 ### `schema`
 
 _Default_: The description passed to the decorator or message of the exception will be shown. See [description](#description).
 
-The schema property can be used to modify the message property only of the example value shown in Swagger UI. It is also possible, to reference to existing schemas using the `ReferenceObject`.
+The schema property can be used to modify the message property only of the example value shown in Swagger-UI. It is also possible, to reference to existing schemas using the [`ReferenceObject`](https://github.com/nestjs/swagger/blob/master/lib/interfaces/open-api-spec.interface.ts#L193).
 
 ### `type`
 
@@ -101,7 +101,7 @@ See our [demo project](https://github.com/nanogiants/nestjs-swagger-api-exceptio
 
 _Default_: `undefined`
 
-The isArray property can only be used in combination with the `type` property. It allows you to let the type be shown as array in Swagger UI.
+The isArray property can only be used in combination with the `type` property. It allows you to let the type be shown as array in Swagger-UI.
 
 ### `requiredProperties`
 

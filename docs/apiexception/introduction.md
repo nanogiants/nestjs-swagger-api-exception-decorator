@@ -4,8 +4,6 @@ title: Introduction
 slug: /
 ---
 
-NestJS Swagger decorator for API exceptions.
+[NestJS Swagger](https://docs.nestjs.com/openapi/introduction) decorator for API exceptions.
 
-This is a wrapper for `@ApiResponse()` which uses `message` and `status` inside NestJS `HttpException` as description and HTTP status code in the Swagger documentation. You can pass any subclass of `HttpException` to the decorator. This decorator is especially useful if you want to define multiple custom exceptions per status code.
-
-![Default decorator screenshot example](../../static/img/decorator.png)
+This decorator is a wrapper for [`ApiResponse`](https://github.com/nestjs/swagger/blob/master/lib/decorators/api-response.decorator.ts) decorator. It uses message, error and status of all given `HttpException` and generates the correct responses in the [OpenAPI](https://swagger.io/specification/) Swagger documentation based on them. This decorator is especially useful when used with custom exceptions.

@@ -9,9 +9,9 @@ There are two ways of defining a template:
 1. Specify a template each time you're using the decorator
 2. Use the `buildTemplatedApiExceptionDecorator()` function to generate a reusable decorator
 
-## Use the configuration object
+## The configuration object
 
-When using the `@ApiException` decorator you can additionally pass an object. In previous sections you may have seen, that you can specify a `description`. Additionally you can pass a `template` which then will be used to display the example response in SwaggerUI. For example:
+The `ApiException` decorator additionally accepts an object. In addition to the description it is possible to pass a [`template`](/api#template). This is used to display the sample response in Swagger-UI. For example:
 
 ```typescript
 @ApiException(() => BadRequestException, {
@@ -25,9 +25,11 @@ When using the `@ApiException` decorator you can additionally pass an object. In
 })
 ```
 
+:::note
 Please keep in mind, that the specified template will **only** be used for this decorator and not for other documented `@ApiException` decorators and therefore has to be defined in each `@ApiException` decorator. If you want to re-use the template for all `@ApiException` decorators, we recommend using the builder function.
+:::
 
-## Use the builder function
+## The builder function
 
 Generate a custom `@TemplatedApiException` decorator with the `buildTemplatedApiExceptionDecorator` function and pass a template which matches your needs or your generic NestJS exception filters response body. For example:
 
@@ -65,10 +67,11 @@ export class UserController {
 
 ### Configuration
 
-The `buildTemplatedApiExceptionDecorator` function takes two arguments:
+You may configure your `TemplatedApiException` decorator with the arguments:
 
-- `template`: pass any template object (may include any placeholder)
-- `options`
-  - `contentType`: Specify content type. Default: `application/json`
+```typescript
+buildTemplatedApiExceptionDecorator(template: Template, options: Omit<Options, 'template'>)
+```
 
-For available placeholders please see our [API description](/api#template).
+1. [`template`](/api#template): pass any template object (may include any [built-in](/api#placeholder) or [custom](/api#placeholders) placeholder)
+2. [`options`](/api#overview): excluding the previously specified `template`

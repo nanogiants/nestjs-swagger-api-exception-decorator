@@ -10,7 +10,6 @@ import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator
 @Controller()
 @ApiException(() => UnauthorizedException, { description: 'User is not authorized' })
 export class AppController {
-
   @Patch()
   @ApiOperation({ summary: 'This is an example with nestjs default exceptions' })
   @ApiException(() => NotFoundException, { description: 'Resource could not be found' })

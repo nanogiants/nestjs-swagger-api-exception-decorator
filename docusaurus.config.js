@@ -10,7 +10,7 @@ module.exports = {
   projectName: 'nestjs-swagger-api-exception-decorator',
   themeConfig: {
     navbar: {
-      title: '@ApiException',
+      title: 'ApiException',
       logo: {
         alt: 'NanoGiants',
         src: 'img/logo.svg',
@@ -46,7 +46,7 @@ module.exports = {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
           routeBasePath: '/',
-          editUrl: 'https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/edit/master/documentation/',
+          editUrl: 'https://github.com/nanogiants/nestjs-swagger-api-exception-decorator/edit/documentation',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

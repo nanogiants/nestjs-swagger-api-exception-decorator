@@ -10,7 +10,7 @@ Simply import the decorator in your controller where you want to document the AP
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 ```
 
-Then start decorating the controller routes where the API exceptions should be shown in the API documentation. For example:
+Then start decorating the controller routes where the API exceptions should be shown in the Swagger-UI. For example:
 
 ```typescript
 import { BadRequestException, UnauthorizedException } from '@nestjs/common';
@@ -27,7 +27,7 @@ export class UserController {
 }
 ```
 
-## At class level
+## Class wide
 
 You can also decorate classes with the `@ApiException` decorator. For example:
 

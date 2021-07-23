@@ -32,7 +32,7 @@ export class UserNotAuthorizedException extends UnauthorizedException {
 }
 ```
 
-_Remember that all NestJS exceptions extend `HttpException` which contain a description and the HTTP status code._
+_Remember that all NestJS exceptions extend `HttpException` which contain a description, error and the HTTP status code._
 
 The advantages of using custom exceptions are:
 
@@ -40,7 +40,7 @@ The advantages of using custom exceptions are:
 - The description needs to be written once
 - Just `throw new UserNotAuthorizedException();`. There is no need to `throw new UnauthorizedException('The user is not authorized');` over and over again
   - Much more convenient when using auto-completion / IntelliSense
-- Compatible with `@ApiException` decorator 🤩
+- Compatible with `@ApiException` decorator
 
 ## Route methods
 
@@ -50,7 +50,7 @@ Simply import the decorator in your controller where you want to document the AP
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 ```
 
-Then start decorating the controller routes where the API exceptions should be shown in the API documentation. For example:
+Then start decorating the controller routes where the API exceptions should be shown in the Swagger-UI. For example:
 
 ```typescript
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
@@ -68,7 +68,7 @@ export class UserController {
 }
 ```
 
-The decorator then takes the exception descriptions and passes them to Swagger. No need to pass an object containing a description here!
+The decorator then takes the exception descriptions, errors and status codes and passes them to Swagger-UI. No need to pass an object containing a description here!
 
 ### Overwrite the description
 
@@ -108,7 +108,7 @@ export class PasswordNotMatchingRequirementsException extends BadRequestExceptio
 This allows to pass multiple exceptions with different status codes. The decorator determines which HTTP status code is specified in the exceptions and attaches the exceptions automatically to the correct example values.
 :::
 
-## At class level
+## Class wide
 
 :::caution
 Decorators at class level will **only** be applied to controller routes which are decorated by `@ApiOperation` decorator!
