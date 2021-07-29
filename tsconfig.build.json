@@ -5,5 +5,5 @@
     "declaration": true,
     "removeComments": false
   },
-  "exclude": ["node_modules", "dist", "src/**/*.spec.ts", "demo", "documentation", "src/test"]
+  "exclude": ["node_modules", "dist", "src/**/*.spec.ts", "demo", "src/test"]
 }

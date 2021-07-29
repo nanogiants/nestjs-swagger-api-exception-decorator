@@ -4,7 +4,7 @@ module.exports = {
     project: './tsconfig.json',
     sourceType: 'module',
   },
-  ignorePatterns: ['.eslintrc.js', 'demo', 'documentation'],
+  ignorePatterns: ['.eslintrc.js', 'demo'],
   plugins: ['eslint-plugin-import', 'eslint-plugin-jsdoc', '@typescript-eslint/eslint-plugin'],
   extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   root: true,
