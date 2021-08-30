@@ -20,6 +20,6 @@ export const buildTemplatedApiExceptionDecorator = <T = Template>(
     options?: Options<T>,
   ) => {
     const mergedOptions = { ...globalOptions, template, ...options } as unknown as Options<Template>;
-    return ApiException(exceptions as ExceptionOrExceptionArrayFunc<Exception>, mergedOptions);
+    return ApiException(exceptions, mergedOptions);
   };
 };
