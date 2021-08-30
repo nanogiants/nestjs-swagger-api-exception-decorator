@@ -1,23 +1,13 @@
 import { HttpException } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
-import {
-  ExceptionArguments,
-  ExceptionOrExceptionArray,
-  ExceptionOrExceptionArrayFunc,
-} from '../interfaces/api-exception.interface';
+import { ExceptionOrExceptionArrayFunc } from '../interfaces/api-exception.interface';
 import { Options } from '../interfaces/options.interface';
 import { applyClassDecorator, getApiResponseContent } from '../utils/decorator.util';
 import { buildContentObjects, mergeExampleContent } from '../utils/example-content.util';
-import {
-  areExceptionsPassedWithoutArrowFunction,
-  instantiateExceptions,
-  printWarningIfUsingDeprecatedSignature,
-} from '../utils/exception.util';
+import { instantiateExceptions } from '../utils/exception.util';
 import { mergeOptions } from '../utils/options.util';
 import { resolveTypeTemplate } from '../utils/type.util';
-
-type Decorator = ClassDecorator & MethodDecorator;
 
 /**
  * This shows exceptions with status code, description and grouped with example values. If there are multiple exceptions
@@ -31,34 +21,14 @@ type Decorator = ClassDecorator & MethodDecorator;
 export function ApiException<T extends HttpException>(
   exceptions: ExceptionOrExceptionArrayFunc<T>,
   options?: Options,
-): Decorator;
-
-/**
- * @deprecated This decorator signature will be removed in future versions. Please provide HttpExceptions as function:
- *
- * \@ApiException(() => BadRequestException, [options])
- */
-export function ApiException<T extends HttpException>(
-  exceptions: ExceptionOrExceptionArray<T>,
-  options?: Options,
-): Decorator;
-export function ApiException<T extends HttpException>(exceptions: ExceptionArguments<T>, options?: Options): Decorator {
-  let passedExceptions: ExceptionOrExceptionArray<T>;
-  if (areExceptionsPassedWithoutArrowFunction(exceptions)) {
-    passedExceptions = exceptions as ExceptionOrExceptionArray<T>;
-  } else {
-    passedExceptions = (exceptions as ExceptionOrExceptionArrayFunc<T>)();
-  }
-
+): ClassDecorator & MethodDecorator {
   resolveTypeTemplate(options);
 
   const mergedOptions = mergeOptions(options);
-  const instances = instantiateExceptions(passedExceptions);
+  const instances = instantiateExceptions(exceptions);
   const newContents = buildContentObjects(instances, mergedOptions);
 
   return (target: any, propertyKey?: string, descriptor?: PropertyDescriptor) => {
-    printWarningIfUsingDeprecatedSignature(exceptions, target, propertyKey);
-
     if (descriptor) {
       const content = getApiResponseContent(descriptor);
 
@@ -75,7 +45,7 @@ export function ApiException<T extends HttpException>(exceptions: ExceptionArgum
         }
       }
     } else {
-      applyClassDecorator(target, passedExceptions, options);
+      applyClassDecorator(target, exceptions, options);
     }
 
     return descriptor ? descriptor : target;

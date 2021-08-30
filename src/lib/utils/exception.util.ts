@@ -1,9 +1,11 @@
-import { HttpException, Type } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 
-import { ExceptionArguments, ExceptionOrExceptionArray } from '../interfaces/api-exception.interface';
+import { ExceptionOrExceptionArrayFunc } from '../interfaces/api-exception.interface';
 
-export const instantiateExceptions = (exceptions: ExceptionOrExceptionArray<HttpException>) => {
-  return (Array.isArray(exceptions) ? exceptions : [exceptions]).map(exception => {
+export const instantiateExceptions = (exceptions: ExceptionOrExceptionArrayFunc<HttpException>) => {
+  const resolvedExceptions = exceptions();
+
+  return (Array.isArray(resolvedExceptions) ? resolvedExceptions : [resolvedExceptions]).map(exception => {
     if (typeof exception === 'object') {
       return exception;
     }
@@ -23,24 +25,3 @@ export const instantiateExceptions = (exceptions: ExceptionOrExceptionArray<Http
     }
   });
 };
-
-const printedTargets = [];
-
-export const printWarningIfUsingDeprecatedSignature = (
-  exceptions: ExceptionArguments<HttpException>,
-  target: any,
-  propertyKey: string,
-) => {
-  if (areExceptionsPassedWithoutArrowFunction(exceptions) && propertyKey) {
-    const key = `${target.constructor.name}.${propertyKey}`;
-    if (!printedTargets.includes(key)) {
-      printedTargets.push(key);
-      console.warn(`@ApiException: Deprecated decorator signature detected: ${key}`);
-    }
-  }
-};
-
-export const areExceptionsPassedWithoutArrowFunction = <T extends HttpException>(exceptions: ExceptionArguments<T>) =>
-  (Array.isArray(exceptions) && (exceptions[0] as Type<T>).prototype instanceof HttpException) ||
-  (exceptions as Type<T>).prototype instanceof HttpException ||
-  typeof exceptions !== 'function';
