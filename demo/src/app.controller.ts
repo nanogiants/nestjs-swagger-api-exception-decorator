@@ -106,10 +106,25 @@ export class AppController {
     return 'something logged';
   }
 
-  @Post('/schema')
+  @Post('/messageSchema')
+  @ApiOperation({ summary: 'Message schema testing' })
+  @ApiException(() => BadRequestException, {
+    messageSchema: { $ref: getSchemaPath('SwaggerAnnotations') },
+  })
+  messageSchemaTest() {
+    return 'something logged';
+  }
+
+  @Post('/enrichSchema')
   @ApiOperation({ summary: 'Schema testing' })
   @ApiException(() => BadRequestException, {
-    schema: { $ref: getSchemaPath('SwaggerAnnotations') },
+    enrichSchema: {
+      description: 'overwriting schema description',
+      externalDocs: {
+        description: 'test',
+        url: 'https://somewhere.com/docs1',
+      },
+    },
   })
   schemaTest() {
     return 'something logged';
