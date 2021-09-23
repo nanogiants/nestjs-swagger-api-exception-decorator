@@ -35,9 +35,9 @@ export const buildSchema = (options: MergedOptions, exception: HttpException): S
 
   const properties: Record<string, SchemaOrReference> = {};
   for (const [key, value] of Object.entries(resolvedTemplate)) {
-    if (key === 'message' && !options.userDefinedTemplate && (options.schema || options.type)) {
-      if (options.schema) {
-        properties[key] = options.schema;
+    if (key === 'message' && !options.userDefinedTemplate && (options.messageSchema || options.type)) {
+      if (options.messageSchema) {
+        properties[key] = options.messageSchema;
       } else {
         properties[key] = buildSwaggerTypeRef(options);
       }
@@ -58,10 +58,13 @@ export const buildSchema = (options: MergedOptions, exception: HttpException): S
     }
   }
 
+  const optionsSchema = options.enrichSchema ? options.enrichSchema : {};
+
   return {
     type: 'object',
     description: options.description,
     properties,
     required,
+    ...optionsSchema,
   };
 };

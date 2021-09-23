@@ -13,7 +13,8 @@ export interface Options<T = Template> {
   requiredProperties?: (keyof T)[];
   contentType?: string;
   description?: string;
-  schema?: SchemaObject | ReferenceObject;
+  messageSchema?: SchemaObject | ReferenceObject;
+  enrichSchema?: SchemaObject;
   type?: () => string | Type<unknown>;
   isArray?: boolean;
   placeholders?: Record<string, Placeholder>;
