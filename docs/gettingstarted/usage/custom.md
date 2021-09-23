@@ -113,3 +113,21 @@ This allows to pass multiple exceptions with different status codes. The decorat
 :::caution
 Decorators at class level will **only** be applied to controller routes which are decorated by `@ApiOperation` decorator!
 :::
+
+## Custom exceptions with arguments
+
+If using custom exceptions with arguments, the decorator can't instantiate the exceptions itself. Therefore you've to instantiate the exceptions yourself. This allows, to provide an example for the exception in Swagger-UI.
+
+For example:
+
+```typescript
+export class UserNotFoundException extends NotFoundException {
+  constructor(private email: string) {
+    super(`${email} not found`);
+  }
+}
+```
+
+```typescript
+@ApiException(() => new UserNotFoundException('test@email.com'))
+```

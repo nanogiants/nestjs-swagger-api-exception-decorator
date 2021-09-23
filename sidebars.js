@@ -35,7 +35,13 @@ module.exports = {
     {
       type: 'category',
       label: 'Release Notes',
-      items: ['releasenotes/v1.2.0', 'releasenotes/v1.3.0', 'releasenotes/v1.4.0', 'releasenotes/v1.5.0'],
+      items: [
+        'releasenotes/v1.2.0',
+        'releasenotes/v1.3.0',
+        'releasenotes/v1.4.0',
+        'releasenotes/v1.5.0',
+        'releasenotes/v1.6.0',
+      ],
     },
   ],
 };
