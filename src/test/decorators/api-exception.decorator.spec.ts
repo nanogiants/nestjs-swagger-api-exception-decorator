@@ -151,8 +151,8 @@ describe('Decorator', () => {
         class Ignore {
           @ApiException(() => BadRequestException, {
             description: 'This is a test',
-            schema: {
-              description: 'custom schema',
+            messageSchema: {
+              description: 'custom message schema',
               type: 'string',
               example: {
                 test: {},

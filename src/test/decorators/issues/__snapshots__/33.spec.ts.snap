@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Issue #33 given pre-initialized exception with schema should properly use the schema 1`] = `
+Object {
+  "500": Object {
+    "content": Object {
+      "application/json": Object {
+        "examples": Object {
+          "UserAlreadyRegisteredException": Object {
+            "description": "email@address.com already registered",
+            "value": Object {
+              "statusCode": 500,
+            },
+          },
+        },
+        "schema": Object {
+          "description": "User already registered",
+          "externalDocs": Object {
+            "description": "Refer this for more",
+            "url": "https://someplace.com/doc1",
+          },
+          "properties": Object {
+            "statusCode": Object {
+              "example": 500,
+              "type": "number",
+            },
+          },
+          "required": Array [
+            "statusCode",
+          ],
+          "type": "object",
+        },
+      },
+    },
+    "description": "",
+    "isArray": undefined,
+    "type": undefined,
+  },
+}
+`;
