@@ -3,3 +3,9 @@ dist/
 coverage/
 *.tar.gz
 *.tgz
+
+# stryker temp files
+.stryker-tmp
+
+# stryker reports
+reports/
