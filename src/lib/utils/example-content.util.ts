@@ -62,7 +62,7 @@ const resolvePlaceholders = (template: Template, exception: HttpException, optio
       if (isPlaceholder(template[key])) {
         delete template[key];
       }
-    } else if (templateValue !== null && typeof templateValue === 'object') {
+    } else if (typeof templateValue === 'object') {
       resolvePlaceholders(templateValue as Template, exception, options);
     }
   }
