@@ -3,14 +3,10 @@ import { getTypeIsArrayTuple } from '@nestjs/swagger/dist/decorators/helpers';
 import { SchemaObjectMetadata } from '@nestjs/swagger/dist/interfaces/schema-object-metadata.interface';
 import { ModelPropertiesAccessor } from '@nestjs/swagger/dist/services/model-properties-accessor';
 
+import { isClass, isFunction } from '.';
 import { MergedOptions, Template } from '../interfaces/options.interface';
 
 const accessor = new ModelPropertiesAccessor();
-
-const isFunction = (func: unknown): func is (...args: any[]) => boolean => typeof func === 'function';
-
-const isClass = (func: unknown) =>
-  typeof func === 'function' && /^class\s/.test(Function.prototype.toString.call(func));
 
 const resolveLazyTypeFunction = (type: SchemaObjectMetadata['type']): any =>
   isFunction(type) && !isClass(type) && type.name === 'type' ? type() : type;
