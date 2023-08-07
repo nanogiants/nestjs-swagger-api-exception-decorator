@@ -3,9 +3,9 @@ import { getSchemaPath } from '@nestjs/swagger';
 import { getTypeIsArrayTuple } from '@nestjs/swagger/dist/decorators/helpers';
 import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { MergedOptions, Options } from '../interfaces/options.interface';
 import { resolveTemplatePlaceholders } from './example-content.util';
 import { DefaultTemplateRequiredProperties } from './options.util';
+import { MergedOptions, Options } from '../interfaces/options.interface';
 
 type SchemaOrReference = SchemaObject | ReferenceObject;
 

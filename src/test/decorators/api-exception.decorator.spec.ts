@@ -4,10 +4,10 @@ import { BadRequestException, ForbiddenException, NotFoundException } from '@nes
 import { ApiOperation, ApiOperationOptions, ApiResponse, ApiResponseOptions } from '@nestjs/swagger';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
-import { ApiException, buildPlaceholder, buildTemplatedApiExceptionDecorator } from '../../lib';
 import { BaseException, ExceptionWithoutError, UserUnauthorizedException } from './exceptions/BaseException';
 import { BaseExceptionType } from './type/base-exception.type';
 import { SwaggerAnnotations } from './type/swagger-annotation.type';
+import { ApiException, buildPlaceholder, buildTemplatedApiExceptionDecorator } from '../../lib';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   statusCode: '$status',
