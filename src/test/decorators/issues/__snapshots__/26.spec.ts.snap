@@ -1,45 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Issue #26 given InternalServerError exception and custom exception sharing the same status code should attach the exceptions properly without missing another 1`] = `
-Object {
-  "500": Object {
-    "content": Object {
-      "application/json": Object {
-        "examples": Object {
-          "EmailResponseFailedException": Object {
+{
+  "500": {
+    "content": {
+      "application/json": {
+        "examples": {
+          "EmailResponseFailedException": {
             "description": "Email Response Failed",
-            "value": Object {
+            "value": {
               "error": "Internal Server Error",
               "message": "Email Response Failed",
               "statusCode": 500,
             },
           },
-          "InternalServerException": Object {
+          "InternalServerException": {
             "description": "Something went wrong",
-            "value": Object {
+            "value": {
               "error": "Internal Server Error",
               "message": "Something went wrong",
               "statusCode": 500,
             },
           },
         },
-        "schema": Object {
+        "schema": {
           "description": undefined,
-          "properties": Object {
-            "error": Object {
+          "properties": {
+            "error": {
               "example": "Internal Server Error",
               "type": "string",
             },
-            "message": Object {
+            "message": {
               "example": "Email Response Failed",
               "type": "string",
             },
-            "statusCode": Object {
+            "statusCode": {
               "example": 500,
               "type": "number",
             },
           },
-          "required": Array [
+          "required": [
             "statusCode",
             "message",
           ],

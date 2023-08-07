@@ -87,7 +87,7 @@ class CustomNotFoundExceptionWithArrayMessage extends NotFoundException {
 }
 
 describe('Decorator', () => {
-  const ApiResponseMock = ApiResponse as jest.Mock<typeof ApiResponse>;
+  const ApiResponseMock = ApiResponse as unknown as jest.Mock<typeof ApiResponse>;
 
   beforeEach(() => {
     ApiResponseMock.mockClear();
