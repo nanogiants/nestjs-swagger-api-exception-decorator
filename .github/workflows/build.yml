@@ -22,7 +22,7 @@ jobs:
           cache-dependency-path: |
             ./package-lock.json
             ./demo/package-lock.json
-      - run: npm ci
+      - run: npm i
       - run: npm run lint:all
       - run: npm test -- --coverage
       - name: SonarCloud Scan
