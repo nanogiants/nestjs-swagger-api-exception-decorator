@@ -1,11 +1,11 @@
 import { HttpException } from '@nestjs/common';
 import { ContentObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
-import { buildPlaceholder } from '../builder/placeholder.builder';
-import { MergedOptions, Placeholder, Template } from '../interfaces/options.interface';
 import { merge } from './example.util';
 import { buildSchema } from './schema.util';
 import { buildMessageByType } from './type.util';
+import { buildPlaceholder } from '../builder/placeholder.builder';
+import { MergedOptions, Placeholder, Template } from '../interfaces/options.interface';
 
 const PLACEHOLDER_IDENTIFIER = '$';
 const isPlaceholder = (value: unknown): value is string =>
