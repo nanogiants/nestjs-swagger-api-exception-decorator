@@ -62,8 +62,5 @@
     "printWidth": 120,
     "trailingComma": "all",
     "arrowParens": "avoid"
-  },
-  "dependencies": {
-    "prepack": "^0.2.45"
   }
 }
