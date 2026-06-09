@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { ApiException } from '../../../lib';
+import { DECORATORS } from '../../../lib/utils/swagger-internals.util';
 
 class EmailResponseFailedException extends InternalServerErrorException {
   constructor() {

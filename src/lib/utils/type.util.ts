@@ -1,8 +1,9 @@
-import { DECORATORS } from '@nestjs/swagger/dist/constants';
-import { getTypeIsArrayTuple } from '@nestjs/swagger/dist/decorators/helpers';
-import { SchemaObjectMetadata } from '@nestjs/swagger/dist/interfaces/schema-object-metadata.interface';
-import { ModelPropertiesAccessor } from '@nestjs/swagger/dist/services/model-properties-accessor';
-
+import {
+  DECORATORS,
+  getTypeIsArrayTuple,
+  ModelPropertiesAccessor,
+  SchemaObjectMetadata,
+} from './swagger-internals.util';
 import { MergedOptions, Template } from '../interfaces/options.interface';
 
 const accessor = new ModelPropertiesAccessor();

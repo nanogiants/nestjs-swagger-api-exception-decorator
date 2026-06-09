@@ -1,15 +1,14 @@
 import { HttpException } from '@nestjs/common';
 import { getSchemaPath } from '@nestjs/swagger';
-import { getTypeIsArrayTuple } from '@nestjs/swagger/dist/decorators/helpers';
-import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
 
 import { resolveTemplatePlaceholders } from './example-content.util';
 import { DefaultTemplateRequiredProperties } from './options.util';
+import { getTypeIsArrayTuple } from './swagger-internals.util';
+import { ReferenceObject, SchemaObject } from '../interfaces/open-api.interface';
 import { MergedOptions, Options } from '../interfaces/options.interface';
 
 type SchemaOrReference = SchemaObject | ReferenceObject;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 const buildSwaggerTypeRef = (options: Pick<Options, 'type' | 'isArray'>): SchemaOrReference => {
   const [type, isArray] = getTypeIsArrayTuple(options.type, !!options.isArray);
   const schemaPath = getSchemaPath(type());

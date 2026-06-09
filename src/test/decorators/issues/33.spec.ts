@@ -1,7 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
-import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 import { buildTemplatedApiExceptionDecorator } from '../../../lib';
+import { DECORATORS } from '../../../lib/utils/swagger-internals.util';
 
 const TemplatedApiException = buildTemplatedApiExceptionDecorator({
   message: '$message',

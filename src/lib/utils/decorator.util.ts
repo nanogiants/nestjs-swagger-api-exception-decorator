@@ -1,6 +1,6 @@
 import { HttpException } from '@nestjs/common';
-import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
+import { DECORATORS } from './swagger-internals.util';
 import { ApiException } from '../decorators/api-exception.decorator';
 import { ExceptionOrExceptionArrayFunc } from '../interfaces/api-exception.interface';
 import { MetaContent } from '../interfaces/api-response.interface';

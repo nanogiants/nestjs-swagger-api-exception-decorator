@@ -1,5 +1,6 @@
 import { HttpException, Type } from '@nestjs/common';
-import { ReferenceObject, SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
+
+import { ReferenceObject, SchemaObject } from './open-api.interface';
 
 export type Template = Record<string, any>;
 
