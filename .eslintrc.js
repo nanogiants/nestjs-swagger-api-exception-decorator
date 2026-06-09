@@ -5,7 +5,7 @@ module.exports = {
     sourceType: 'module',
   },
   ignorePatterns: ['.eslintrc.js', 'demo'],
-  plugins: ['eslint-plugin-import', 'eslint-plugin-jsdoc', '@typescript-eslint/eslint-plugin'],
+  plugins: ['eslint-plugin-import', '@typescript-eslint/eslint-plugin'],
   extends: ['plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   root: true,
   env: {
