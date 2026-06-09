@@ -3,3 +3,5 @@ dist/
 coverage/
 *.tar.gz
 *.tgz
+
+.opencode
